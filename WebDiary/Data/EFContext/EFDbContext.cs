@@ -26,6 +26,7 @@ namespace WebDiary.Data.EFContext
         public virtual DbSet<Lesson> Lessons { get; set; }
         public virtual DbSet<Mark> Marks { get; set; }
         public virtual DbSet<Schedule> Schedules { get; set; }
+        public virtual DbSet<Journal> Journals { get; set; }
 
 
 

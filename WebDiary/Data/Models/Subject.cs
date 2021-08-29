@@ -24,5 +24,6 @@ namespace WebDiary.Data.Models
 
         public virtual ICollection<Lesson> Lessons { get; set; }
         public virtual ICollection<Journal> Journals { get; set; }
+        public virtual ICollection<Student> Students { get; set; }
     }
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebDiary.Data.Models;
 
-namespace WebDiary.Data.Interfaces
+namespace WebDiary.Data.ViewModels
 {
-    public interface IParent
+    public class ListSubjectViewModel
     {
-        IEnumerable<Parent> GetParents { get; }
+        public IEnumerable<SubjectViewModel> GetSubjects { get; set; }
     }
 }

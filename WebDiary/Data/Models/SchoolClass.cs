@@ -18,13 +18,14 @@ namespace WebDiary.Data.Models
         public DateTime FinalDate { get; set; }
 
         [ForeignKey("School")]
-        public int SchoolId { get; set; }
+        public string SchoolId { get; set; }
         public virtual School School { get; set; }
         [ForeignKey("Teacher")]
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
         public virtual SchoolWorker Teacher { get; set; }
 
-        public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<SchoolClassStudent> SchoolClassStudents { get; set; }
         public virtual ICollection<Subject> Subjects { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

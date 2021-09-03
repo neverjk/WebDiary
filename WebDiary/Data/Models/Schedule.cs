@@ -14,7 +14,7 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
 
         [ForeignKey("SchoolClass")]
-        public int SchoolClassId { get; set; }
+        public string SchoolClassId { get; set; }
         public virtual SchoolClass SchoolClass { get; set; }
 
         public virtual ICollection<Lesson> Lessons { get; set; }

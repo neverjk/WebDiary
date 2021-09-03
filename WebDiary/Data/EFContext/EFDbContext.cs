@@ -38,6 +38,27 @@ namespace WebDiary.Data.EFContext
             }
             base.OnModelCreating(builder);
 
+            builder.Entity<SchoolClassStudent>()
+                .HasKey(x => new { x.SchoolClassId, x.StudentId });
+            builder.Entity<SchoolClassStudent>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.SchoolClassStudents)
+                .HasForeignKey(sc => sc.StudentId);
+            builder.Entity<SchoolClassStudent>()
+                .HasOne(sc => sc.SchoolClass)
+                .WithMany(c => c.SchoolClassStudents)
+                .HasForeignKey(sc => sc.SchoolClassId);
+
+            builder.Entity<StudentSubject>()
+                .HasKey(x => new { x.SubjectId, x.StudentId });
+            builder.Entity<StudentSubject>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.StudentSubjects)
+                .HasForeignKey(sc => sc.StudentId);
+            builder.Entity<StudentSubject>()
+                .HasOne(sc => sc.Subject)
+                .WithMany(c => c.StudentSubjects)
+                .HasForeignKey(sc => sc.SubjectId);
 
             builder.Entity<DbUserRole>(userRole =>
             {
@@ -50,6 +71,7 @@ namespace WebDiary.Data.EFContext
                     .WithMany(r => r.UserRoles)
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
+
             });
         }
     }

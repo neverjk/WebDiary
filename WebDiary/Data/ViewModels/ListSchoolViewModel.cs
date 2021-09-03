@@ -6,10 +6,8 @@ using WebDiary.Data.Models;
 
 namespace WebDiary.Data.ViewModels
 {
-    public class JournalViewModel
+    public class ListSchoolViewModel
     {
-        public Journal GetJournal { get; set; }
-        public ICollection<Mark> Marks { get; set; }
-        public Subject Subject { get; set; }
+        public IEnumerable<School> GetSchools { get; set; }
     }
 }

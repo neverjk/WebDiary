@@ -14,13 +14,10 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
 
         [ForeignKey("Subject")]
-        public int SubjectId { get; set; }
+        public string SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
 
-        public virtual ICollection<Mark> Current { get; set; }
-        public virtual ICollection<Mark> Semester1 { get; set; }
-        public virtual ICollection<Mark> Semester2 { get; set; }
-        public virtual ICollection<Mark> Final { get; set; }
+        public virtual ICollection<Mark> Marks { get; set; }
 
     }
 }

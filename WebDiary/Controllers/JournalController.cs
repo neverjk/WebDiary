@@ -19,7 +19,7 @@ namespace WebDiary.Controllers
             _journals = journals;
         }
         [Route("Journal/GetJournalsStudent")]
-        public ViewResult GetJournalsStudent (Student studentId)
+        public ViewResult GetJournalsStudent (string studentId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -28,18 +28,27 @@ namespace WebDiary.Controllers
             //    var id = result.UserId;
             //}
 
-            IEnumerable<Journal> journals = null;
+            List<Journal> journals = null;
             List<JournalViewModel> journalViewModels = null;
-            if (string.IsNullOrEmpty(studentId.Id))
+            if (string.IsNullOrEmpty(studentId))
             {
 
             }
             else
             {
-                journals = _journals.GetJournals.Where(x => x.Subject.SchoolClass.Students.Contains(studentId));
+                foreach(Journal j in _journals.GetJournals)
+                {
+                    foreach(SchoolClassStudent s in j.Subject.SchoolClass.SchoolClassStudents)
+                    {
+                        if (s.Student.Id.ToLower() == studentId.ToLower())
+                        {
+                            journals.Add(j);
+                        }
+                    }
+                }
                 foreach(Journal j in journals)
                 {
-                    journalViewModels.Add(new JournalViewModel { GetJournal = j, Current = j.Current, Final = j.Final, Semester1 = j.Semester1, Semester2 = j.Semester2, Subject = j.Subject });
+                    journalViewModels.Add(new JournalViewModel { GetJournal = j, Marks=j.Marks, Subject = j.Subject });
                 }
                 //if (string.Equals("Benzin", category, StringComparison.OrdinalIgnoreCase))
                 //{
@@ -86,7 +95,7 @@ namespace WebDiary.Controllers
                 journals = _journals.GetJournals.Where(x => x.Subject.Teacher==teacherId);
                 foreach (Journal j in journals)
                 {
-                    journalViewModels.Add(new JournalViewModel { GetJournal = j, Current = j.Current, Final = j.Final, Semester1 = j.Semester1, Semester2 = j.Semester2, Subject = j.Subject });
+                    journalViewModels.Add(new JournalViewModel { GetJournal = j, Marks=j.Marks, Subject = j.Subject });
                 }
                 //if (string.Equals("Benzin", category, StringComparison.OrdinalIgnoreCase))
                 //{
@@ -132,7 +141,7 @@ namespace WebDiary.Controllers
                 journal = _journals.GetJournals.FirstOrDefault(x => x.Id.ToLower() == journalId.ToLower());
                 
             }
-            var journalsObj = new JournalViewModel { GetJournal = journal, Current = journal.Current, Final = journal.Final, Semester1 = journal.Semester1, Semester2 = journal.Semester2, Subject = journal.Subject };
+            var journalsObj = new JournalViewModel { GetJournal = journal, Marks=journal.Marks, Subject = journal.Subject };
             return View(journalsObj);
         }
     }

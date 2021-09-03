@@ -8,7 +8,9 @@ namespace WebDiary.Data.ViewModels
 {
     public class ListStudentViewModel
     {
-        public IEnumerable<StudentViewModel> GetStudents { get; set; }
+        public IEnumerable<Student> GetStudents { get; set; }
         public SchoolClass SchoolClass { get; set; }
+        public School School { get; set; }
+        public Subject Subject { get; set; }
     }
 }

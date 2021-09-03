@@ -39,5 +39,25 @@ namespace WebDiary.Controllers
             var schoolObj = new SchoolViewModel { GetSchool = school };
             return View(schoolObj);
         }
+
+        [Route("School/GetSchoolList")]
+        public ViewResult GetSchoolList()
+        {
+            //var info = HttpContext.Session.GetString("UserInfo");
+            //if (info != null)
+            //{
+            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
+            //    var id = result.UserId;
+            //}
+
+            IEnumerable<School> schools = null;
+            schools = _schools.GetSchools.OrderBy(x => x.Name);
+
+            var schoolObj = new ListSchoolViewModel
+            {
+                GetSchools = schools
+            };
+            return View(schoolObj);
+        }
     }
 }

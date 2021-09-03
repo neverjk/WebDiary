@@ -87,9 +87,9 @@ namespace WebDiary.Controllers
                 {
                     foreach(Student s in p.Kids)
                     {
-                        foreach(SchoolClass s1 in s.SchoolClasses)
+                        foreach(SchoolClassStudent s1 in s.SchoolClassStudents)
                         {
-                            if (s1.School.Id.ToLower() == schoolId.Id.ToLower())
+                            if (s1.SchoolClass.School.Id.ToLower() == schoolId.Id.ToLower())
                             {
                                 parents.Add(p);
                             }

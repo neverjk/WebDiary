@@ -20,11 +20,12 @@ namespace WebDiary.Data.Models
         public string Description { get; set; }
 
         [ForeignKey("Director")]
-        public int DirectorId { get; set; }
+        public string DirectorId { get; set; }
         public virtual SchoolWorker Director { get; set; }
 
         public virtual ICollection<SchoolWorker> SchoolWorkers { get; set; }
         public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<SchoolClass> Classes { get; set; }
 
     }
 }

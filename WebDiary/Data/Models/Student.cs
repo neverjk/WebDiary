@@ -13,14 +13,14 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
         public virtual Person Person { get; set; }
 
-        public virtual ICollection<SchoolClass> SchoolClasses { get; set; }
+        public ICollection<SchoolClassStudent> SchoolClassStudents { get; set; }
         public virtual ICollection<Student> Siblings { get; set; }
         public virtual ICollection<Mark> Marks { get; set; }
-        public virtual ICollection<Subject> Subjects { get; set; }
+        public ICollection<StudentSubject> StudentSubjects { get; set; }
 
 
         [ForeignKey("Parent")]
-        public int ParentId { get; set; }
+        public string ParentId { get; set; }
         public virtual Parent Parent { get; set; }
     }
 }

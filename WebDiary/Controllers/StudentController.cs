@@ -27,6 +27,7 @@ namespace WebDiary.Controllers
             //}
 
             Student student = null;
+            List<SchoolClass> schoolClasses = null;
             if (string.IsNullOrEmpty(studentId))
             {
 
@@ -34,14 +35,21 @@ namespace WebDiary.Controllers
             else
             {
                 student = _students.GetStudents.FirstOrDefault(x => x.Id.ToLower() == studentId.ToLower());
+                foreach(Student s in _students.GetStudents)
+                {
+                    foreach(SchoolClassStudent sc in s.SchoolClassStudents)
+                    {
+                        schoolClasses.Add(sc.SchoolClass);
+                    }
+                }
 
             }
-            var studentsObj = new StudentViewModel { GetStudent=student, SchoolClasses=student.SchoolClasses };
+            var studentsObj = new StudentViewModel { GetStudent=student, SchoolClasses= schoolClasses };
             return View(studentsObj);
         }
 
         [Route("Student/GetStudentsClass")]
-        public ViewResult GetStudentsClass(SchoolClass schoolClass)
+        public ViewResult GetStudentsClass(string schoolClassId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -50,26 +58,35 @@ namespace WebDiary.Controllers
             //    var id = result.UserId;
             //}
 
-            IEnumerable<Student> students = null;
-            List<StudentViewModel> studentViewModels = null;
-            if (string.IsNullOrEmpty(schoolClass.Id))
+            List<Student> students = null;
+            SchoolClass schoolClass1 = null;
+            if (string.IsNullOrEmpty(schoolClassId))
             {
 
             }
             else
             {
-                students = _students.GetStudents.Where(x => x.SchoolClasses.Contains(schoolClass));
-                foreach(Student s in students)
+
+                //students = _students.GetStudents.Where(x => x.SchoolClasses.Contains(schoolClass));
+                foreach (Student s in _students.GetStudents)
                 {
-                    studentViewModels.Add(new StudentViewModel { GetStudent = s, SchoolClasses = s.SchoolClasses });
+                    foreach(SchoolClassStudent sc in s.SchoolClassStudents)
+                    {
+                        if (sc.SchoolClass.Id.ToLower() == schoolClassId.ToLower())
+                        {
+                            students.Add(s);
+                            schoolClass1 = sc.SchoolClass;
+                        }
+                    }
                 }
+                
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = studentViewModels, SchoolClass = schoolClass };
+            var studentsObj = new ListStudentViewModel { GetStudents = students, SchoolClass = schoolClass1, Subject=null, School=null };
             return View(studentsObj);
         }
 
         [Route("Student/GetStudentsSchool")]
-        public ViewResult GetStudentsSchool(School school)
+        public ViewResult GetStudentsSchool(string schoolId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -78,9 +95,9 @@ namespace WebDiary.Controllers
             //    var id = result.UserId;
             //}
 
-            IEnumerable<Student> students = null;
-            List<StudentViewModel> studentViewModels = null;
-            if (string.IsNullOrEmpty(school.Id))
+            List<Student> students = null;
+            School school = null;
+            if (string.IsNullOrEmpty(schoolId))
             {
 
             }
@@ -88,22 +105,23 @@ namespace WebDiary.Controllers
             {
                 foreach (Student s in students)
                 {
-                    foreach(SchoolClass s1 in s.SchoolClasses)
+                    foreach(SchoolClassStudent s1 in s.SchoolClassStudents)
                     {
-                        if (s1.School.Id.ToLower() == school.Id.ToLower())
+                        if (s1.SchoolClass.School.Id.ToLower() == schoolId.ToLower())
                         {
-                            studentViewModels.Add(new StudentViewModel { GetStudent = s, SchoolClasses = s.SchoolClasses });
+                            students.Add(s);
+                            school = s1.SchoolClass.School;
                         }
                     }
                     
                 }
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = studentViewModels, SchoolClass = null };
+            var studentsObj = new ListStudentViewModel { GetStudents = students, School=school, Subject=null, SchoolClass=null };
             return View(studentsObj);
         }
 
         [Route("Student/GetStudentsSubject")]
-        public ViewResult GetStudentsSubject(Subject subject)
+        public ViewResult GetStudentsSubject(string subjectId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -112,9 +130,9 @@ namespace WebDiary.Controllers
             //    var id = result.UserId;
             //}
 
-            IEnumerable<Student> students = null;
-            List<StudentViewModel> studentViewModels = null;
-            if (string.IsNullOrEmpty(subject.Id))
+            List<Student> students = null;
+            Subject subject = null;
+            if (string.IsNullOrEmpty(subjectId))
             {
 
             }
@@ -122,17 +140,18 @@ namespace WebDiary.Controllers
             {
                 foreach (Student s in students)
                 {
-                    foreach (Subject s1 in s.Subjects)
+                    foreach (StudentSubject s1 in s.StudentSubjects)
                     {
-                        if (s1.Id.ToLower() == subject.Id.ToLower())
+                        if (s1.Subject.Id.ToLower() == subjectId.ToLower())
                         {
-                            studentViewModels.Add(new StudentViewModel { GetStudent = s, SchoolClasses = s.SchoolClasses });
+                            students.Add(s);
+                            subject = s1.Subject;
                         }
                     }
 
                 }
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = studentViewModels, SchoolClass = null };
+            var studentsObj = new ListStudentViewModel { GetStudents = students, SchoolClass = null, Subject=subject, School=null };
             return View(studentsObj);
         }
 

@@ -40,7 +40,7 @@ namespace WebDiary.Controllers
         }
 
         [Route("Schedule/GetSchedulesStudent")]
-        public ViewResult GetSchedulesStudent(Student studentId)
+        public ViewResult GetSchedulesStudent(string studentId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -49,15 +49,26 @@ namespace WebDiary.Controllers
             //    var id = result.UserId;
             //}
 
-            IEnumerable<Schedule>  schedules = null;
+            List<Schedule>  schedules = null;
             List<ScheduleViewModel> scheduleViewModels = null;
-            if (string.IsNullOrEmpty(studentId.Id))
+            if (string.IsNullOrEmpty(studentId))
             {
 
             }
             else
             {
-                schedules = _schedules.GetSchedules.Where(x => x.SchoolClass.Students.Contains(studentId));
+                foreach(Schedule s in _schedules.GetSchedules)
+                {
+                    foreach(SchoolClassStudent sc in s.SchoolClass.SchoolClassStudents)
+                    {
+                        if (sc.Student.Id.ToLower() == studentId.ToLower())
+                        {
+                            schedules.Add(s);
+                        }
+
+                    }
+                }
+                
                 foreach (Schedule s in schedules)
                 {
                     scheduleViewModels.Add(new ScheduleViewModel {  GetSchedule=s, Lessons=s.Lessons, SchoolClass=s.SchoolClass});

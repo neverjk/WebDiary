@@ -10,7 +10,7 @@ namespace WebDiary.Data.Models
 {
     public class UserProfile
     {
-        [Key, ForeignKey("User")]
+        [ForeignKey("User")]
         public string Id { get; set; }
         [Required, StringLength(75)]
         public string FirstName { get; set; }

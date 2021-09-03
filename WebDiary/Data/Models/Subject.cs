@@ -16,14 +16,14 @@ namespace WebDiary.Data.Models
         public string Description { get; set; }
 
         [ForeignKey("SchoolClass")]
-        public int SchoolClassId { get; set; }
+        public string SchoolClassId { get; set; }
         public virtual SchoolClass SchoolClass { get; set; }
         [ForeignKey("Teacher")]
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
         public virtual SchoolWorker Teacher { get; set; }
 
         public virtual ICollection<Lesson> Lessons { get; set; }
         public virtual ICollection<Journal> Journals { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
+        public ICollection<StudentSubject> StudentSubjects { get; set; }
     }
 }

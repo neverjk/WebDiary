@@ -19,12 +19,9 @@ namespace WebDiary.Data.Repository
         }
 
         public IEnumerable<Journal> GetJournals => _context.Journals
-            .Include(x => x.Current)
-            .Include(x => x.Semester1)
-            .Include(x => x.Semester2)
-            .Include(x => x.Final)
+            .Include(x => x.Marks)
             .Include(x => x.Subject).ThenInclude(x => x.SchoolClass)
             .Include(x => x.Subject).ThenInclude(x => x.Teacher)
-            .Include(x => x.Subject).ThenInclude(x => x.Students);
+            .Include(x => x.Subject).ThenInclude(x => x.StudentSubjects).ThenInclude(x=>x.Student);
     }
 }

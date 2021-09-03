@@ -20,7 +20,7 @@ namespace WebDiary.Data.Models
         public string Homework { get; set; }
 
         [ForeignKey("Subject")]
-        public int SubjectId { get; set; }
+        public string SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
     }
 }

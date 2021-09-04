@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WebDiary.Data.EFContext;
 using WebDiary.Data.Models;
+using WebDiary.Data.ViewModels;
+using WebDiary.Models;
 
 namespace WebDiary.Controllers
 {
@@ -32,26 +39,134 @@ namespace WebDiary.Controllers
             //_myEmailSender = myEmailSender;
         }
 
-        //[Authorize]
-        //[Route("Account/PersonalAccount")]
-        //public ViewResult PersonalAccount()
-        //{
-        //    var info = HttpContext.Session.GetString("UserInfo");
-        //    if (info != null)
-        //    {
-        //        var result = JsonConvert.DeserializeObject<UserInfo>(info);
-        //        var id = result.UserId;
-        //        var userObj = new PersonalAccountViewModel()
-        //        {
-        //            GetUserInfo = result
-        //        };
-        //        return View(userObj);
-        //    }
-        //    else
-        //    {
-        //        return View();
-        //    }
-        //}
+        [Authorize]
+        [Route("Account/PersonalAccount")]
+        public ViewResult PersonalAccount()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var userObj = new PersonalAccountViewModel()
+                {
+                    GetUserInfo = result
+                };
+                return View(userObj);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        [Authorize]
+        [Route("Account/StudentPersonalAccount")]
+        public ViewResult StudentPersonalAccount()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var students = _context.Students.Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x=>x.User)
+                    .Include(x=>x.Person).ThenInclude(x=>x.Schools)
+                    .Include(x=>x.Parent).ThenInclude(x=>x.UserProfile)
+                    .Include(x=>x.Siblings).ThenInclude(x=>x.Person).ThenInclude(x=>x.UserProfile)
+                    .Include(x=>x.SchoolClassStudents).ThenInclude(x=>x.SchoolClass).ThenInclude(x=>x.School);
+                var student = students.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
+                var schools = new List<School>();
+                foreach(SchoolClassStudent scs in student.SchoolClassStudents)
+                {
+                    if (!schools.Contains(scs.SchoolClass.School))
+                    {
+                        schools.Add(scs.SchoolClass.School);
+                    }
+                }
+                
+
+                var userObj = new StudentPersonalAccountViewModel()
+                {
+                    GetUserInfo = result,
+                    Student=student,
+                    Schools=schools
+                };
+                return View(userObj);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        [Authorize]
+        [Route("Account/SchoolWorkerPersonalAccount")]
+        public ViewResult SchoolWorkerPersonalAccount()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var schoolWorkers = _context.SchoolWorkers.Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
+                    .Include(x => x.Subjects).ThenInclude(x=>x.SchoolClass)
+                    .Include(x => x.Classes).ThenInclude(x => x.School);
+                var schoolWorker = schoolWorkers.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
+                var schools = new List<School>();
+                foreach (SchoolClass sc in schoolWorker.Classes)
+                {
+                    if (!schools.Contains(sc.School))
+                    {
+                        schools.Add(sc.School);
+                    }
+                }
+
+
+                var userObj = new SchoolWorkerPersonalAccountViewModel()
+                {
+                    GetUserInfo = result,
+                    SchoolWorker=schoolWorker, 
+                    Schools=schools
+                };
+                return View(userObj);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        [Authorize]
+        [Route("Account/ParentPersonalAccount")]
+        public ViewResult ParentPersonalAccount()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var parents = _context.Parents.Include(x => x.UserProfile).ThenInclude(x=>x.User)
+                    .Include(x => x.Kids).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile);
+                var parent = parents.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
+                var kids = parent.Kids.ToList();
+                
+                var userObj = new ParentPersonalAccountViewModel()
+                {
+                    GetUserInfo = result,
+                    Parent=parent, 
+                    Kids=kids
+                };
+                return View(userObj);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
 
         [HttpGet]
         public IActionResult ForgotPassword()
@@ -192,6 +307,40 @@ namespace WebDiary.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Incorrect login");
+                return View(model);
+            }
+            
+            var result = _signInManager.PasswordSignInAsync(user, model.Password, false, false).Result;
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Incorrect password");
+                return View(model);
+            }
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User);
+            //await _signInManager.SignInAsync(user, isPersistent: false);
+            await Authenticate(model.Email);
+            
+            var userInfo = new UserInfo()
+            {
+                UserId = user.Id,
+                Email = user.Email
+            };
+            HttpContext.Session.SetString("UserInfo", JsonConvert.SerializeObject(userInfo));
+
+            return RedirectToAction("Index", "Home");
         }
 
 

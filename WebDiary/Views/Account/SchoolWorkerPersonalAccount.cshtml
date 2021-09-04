@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "_Layout";
+}
+@{
+    ViewData["Title"] = "SchoolWorkerPersonalAccount";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SchoolWorker Personal Account</title>
+</head>
+<body>
+    <div class="container">
+        <h2>@Model.SchoolWorker.Person.UserProfile.FirstName @Model.SchoolWorker.Person.UserProfile.MiddleName @Model.SchoolWorker.Person.UserProfile.LastName</h2>
+        <p class="card-text">@Model.SchoolWorker.RoleDescription </p>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <img style="height:auto; width:200px; padding-top:7px;" src="https://pmdoc.ru/wp-content/uploads/default-avatar.png" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="row" style="margin-bottom:5px">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <p class="card-text">Email: @Model.GetUserInfo.Email </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:5px">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <p class="card-text">Phone Number: @Model.SchoolWorker.Person.UserProfile.User.PhoneNumber </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:5px">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <h6 class="card-title">Schools</h6>
+                            @{
+                                foreach (School school in Model.Schools)
+                                {
+                                    @await Html.PartialAsync("_SchoolCard", school);
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:5px">
+                </div>
+                <div class="row" style="margin-bottom:5px">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <p class="card-text">Gender: @Model.SchoolWorker.Person.UserProfile.Gender </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:5px">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <h6 class="card-title">Subjects</h6>
+                            @{
+                                foreach (Subject subject in Model.SchoolWorker.Subjects)
+                                {
+                                    @await Html.PartialAsync("_SubjectCard", subject);
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

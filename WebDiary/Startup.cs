@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +33,13 @@ namespace WebDiary
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
+            
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -38,7 +47,7 @@ namespace WebDiary
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            
             services.AddDbContext<EFDbContext>(options =>
             options.UseSqlServer(
               Configuration.GetConnectionString("DefaultConnection")));
@@ -47,12 +56,8 @@ namespace WebDiary
                 .AddEntityFrameworkStores<EFDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                });
+
+            
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
@@ -86,17 +91,30 @@ namespace WebDiary
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
             //app.UseCookiePolicy();
-            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
+            //SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "studentpersonalaccount",
+                    template: "Account/{action}/{id?}",
+                    defaults: new { Controller = "Account", action = "StudentPersonalAccount" });
+                routes.MapRoute(
+                    name: "parentpersonalaccount",
+                    template: "Account/{action}/{id?}",
+                    defaults: new { Controller = "Account", action = "ParentPersonalAccount" });
+                routes.MapRoute(
+                    name: "schoolworkerpersonalaccount",
+                    template: "Account/{action}/{id?}",
+                    defaults: new { Controller = "Account", action = "SchoolWorkerPersonalAccount" });
             });
         }
     }

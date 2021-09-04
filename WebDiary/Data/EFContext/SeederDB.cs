@@ -74,6 +74,8 @@ namespace WebDiary.Data.EFContext
                 _context.UserProfiles.Add(Directoruserprofile);
                 result = userManager.CreateAsync(Directoruser, "Qwerty1-").Result;
                 result = userManager.AddToRoleAsync(Directoruser, DirectorroleName).Result;
+                result = userManager.AddToRoleAsync(Directoruser, "Teacher").Result;
+                result = userManager.AddToRoleAsync(Directoruser, "SchoolWorker").Result;
                 _context.SaveChanges();
                 var Directorperson = new Person { UserProfile = Directoruserprofile, IsActive = true, Schools = new List<School>()};
                 _context.Persons.Add(Directorperson);
@@ -137,6 +139,7 @@ namespace WebDiary.Data.EFContext
                 _context.SaveChanges();
                 var student2 = new Student { Person = student2person, Marks = new List<Mark>(), Siblings = new List<Student>(), SchoolClassStudents = new List<SchoolClassStudent>(), StudentSubjects = new List<StudentSubject>() };
                 student2.Siblings.Add(student1);
+                student1.Siblings.Add(student2);
                 _context.Students.Add(student2);
                 _context.SaveChanges();
                 school.Students.Add(student2);
@@ -163,6 +166,7 @@ namespace WebDiary.Data.EFContext
                 _context.UserProfiles.Add(Teacheruserprofile);
                 result = userManager.CreateAsync(Teacheruser, "Qwerty1-").Result;
                 result = userManager.AddToRoleAsync(Teacheruser, TeacherroleName).Result;
+                result = userManager.AddToRoleAsync(Teacheruser, "SchoolWorker").Result;
                 _context.SaveChanges();
                 var Teacherperson = new Person { UserProfile = Teacheruserprofile, IsActive = true, Schools = new List<School>() };
                 _context.Persons.Add(Teacherperson);
@@ -204,6 +208,11 @@ namespace WebDiary.Data.EFContext
                 subject.StudentSubjects.Add(new StudentSubject { Student = student1, Subject = subject });
                 subject.StudentSubjects.Add(new StudentSubject { Student = student2, Subject = subject });
 
+                var subject2 = new Subject { SchoolClass = schoolClass, Description = "Full Class", Journals = new List<Journal>(), Lessons = new List<Lesson>(), Name = "Geography", StudentSubjects = new List<StudentSubject>(), Teacher = DirectorschoolWorker };
+                _context.Subjects.Add(subject2);
+                subject2.StudentSubjects.Add(new StudentSubject { Student = student1, Subject = subject2 });
+                subject2.StudentSubjects.Add(new StudentSubject { Student = student2, Subject = subject2 });
+
                 var journal = new Journal { Subject = subject, Marks = new List<Mark>()};
                 _context.Journals.Add(journal);
                 var mark1 = new Mark { Description = "Classwork", Journal = journal, MarkType = MarkType.Current, Student = student1, Value = 12, TimeSet = DateTime.Now };
@@ -213,17 +222,37 @@ namespace WebDiary.Data.EFContext
                 journal.Marks.Add(mark1);
                 journal.Marks.Add(mark2);
                 subject.Journals.Add(journal);
+
+                var journal2 = new Journal { Subject = subject2, Marks = new List<Mark>() };
+                _context.Journals.Add(journal);
+                var mark3 = new Mark { Description = "Homework", Journal = journal2, MarkType = MarkType.Current, Student = student1, Value = 5, TimeSet = DateTime.Now.AddDays(-2) };
+                var mark4 = new Mark { Description = "Asia", Journal = journal2, MarkType = MarkType.Semester1, Student = student2, Value = 8, TimeSet = DateTime.Now.AddDays(-10) };
+                _context.Marks.Add(mark3);
+                _context.Marks.Add(mark4);
+                journal2.Marks.Add(mark3);
+                journal2.Marks.Add(mark4);
+                subject2.Journals.Add(journal2);
+
                 school.Classes = new List<SchoolClass>();
                 school.Classes.Add(schoolClass);
+
+
 
                 var schedule = new Schedule { Lessons = new List<Lesson>(), SchoolClass = schoolClass };
                 var lesson1 = new Lesson { Cabinet = "16", Homework = "p. 39 ex 1-4", Subject = subject, Theme = "Triangle", Time = "8:30", WeekDay = 5 };
                 var lesson2 = new Lesson { Cabinet = "15", Homework = "Essay", Subject = subject, Theme = "Triangle", Time = "9:30", WeekDay = 4 };
+
+                var lesson3 = new Lesson { Cabinet = "8", Homework = "Test", Subject = subject2, Theme = "Asia", Time = "12:25", WeekDay = 2 };
+                var lesson4 = new Lesson { Cabinet = "15", Homework = "Essay", Subject = subject2, Theme = "Asia", Time = "13:50", WeekDay = 5 };
                 _context.Schedules.Add(schedule);
                 _context.Lessons.Add(lesson1);
                 _context.Lessons.Add(lesson2);
+                _context.Lessons.Add(lesson3);
+                _context.Lessons.Add(lesson4);
                 schedule.Lessons.Add(lesson1);
                 schedule.Lessons.Add(lesson2);
+                schedule.Lessons.Add(lesson3);
+                schedule.Lessons.Add(lesson4);
                 schoolClass.Schedules = new List<Schedule>();
                 schoolClass.Schedules.Add(schedule);
                 _context.SchoolClasses.Add(schoolClass);

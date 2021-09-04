@@ -1,0 +1,48 @@
+﻿@model WebDiary.Data.ViewModels.LoginViewModel
+
+
+<style>
+    .main-flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 70vh;
+    }
+</style>
+
+
+<div class="main-flex">
+    <div class="card" style="width: 45rem;border-radius:15px; ">
+        <div class="card-body">
+            <h5 class="card-title" style="font-family:sans-serif;">Login</h5>
+
+            <a type="button" class="btn btn-sm btn-dark" style="width:100px" asp-area="" asp-controller="Account" asp-action="Register">Don't have an account?</a>
+            <form method="post" asp-controller="Account" asp-action="Login">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="form-group">
+                    <label></label><br />
+                    <input asp-for="Email" class="form-control" id="register-email" placeholder="Email" required>
+                    @*<span asp-validation-for="Email"></span>*@
+                </div>
+                <div class="form-group">
+                    <label></label><br />
+                    <input asp-for="Password" id="register-password" type="password" value="" placeholder="Password" class="form-control" required>
+                    @*<span asp-validation-for="Password"></span>*@
+                </div>
+                <button type="submit" class="btn btn-success" style="font-family:sans-serif;">Submit</button>
+
+                <a type="button" class="btn btn-dark" style="margin:5px" asp-area="" asp-controller="Account" asp-action="ForgotPassword">Forgot password</a>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdn.rawgit.com/PascaleBeier/bootstrap-validate/v2.2.0/dist/bootstrap-validate.js"></script>
+<script>
+    bootstrapValidate('#register-email', 'email:Enter a valid E-Mail Address!');
+    bootstrapValidate('#register-name', 'alpha:You can use only latin letters.');
+    bootstrapValidate('#register-middlename', 'alpha:You can use only latin letters.');
+    bootstrapValidate('#register-lastname', 'alpha:You can use only latin letters.');
+    bootstrapValidate('#register-password', 'min:6:Enter at least 6 characters.');
+
+</script>

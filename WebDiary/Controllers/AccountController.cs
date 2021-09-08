@@ -61,7 +61,7 @@ namespace WebDiary.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "Student")]
         [Route("Account/StudentPersonalAccount")]
         public ViewResult StudentPersonalAccount()
         {
@@ -101,7 +101,7 @@ namespace WebDiary.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "SchoolWorker")]
         [Route("Account/SchoolWorkerPersonalAccount")]
         public ViewResult SchoolWorkerPersonalAccount()
         {
@@ -110,25 +110,31 @@ namespace WebDiary.Controllers
             {
                 var result = JsonConvert.DeserializeObject<UserInfo>(info);
                 var id = result.UserId;
-                var schoolWorkers = _context.SchoolWorkers.Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
+                var schoolWorkers = _context.SchoolWorkers
+                    .Include(x => x.Person).ThenInclude(x => x.Schools)
+                    .Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
                     .Include(x => x.Subjects).ThenInclude(x=>x.SchoolClass)
                     .Include(x => x.Classes).ThenInclude(x => x.School);
+                
                 var schoolWorker = schoolWorkers.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
-                var schools = new List<School>();
-                foreach (SchoolClass sc in schoolWorker.Classes)
+                var schools = _context.Schools.Include(x => x.SchoolWorkers);
+                var school = new School();
+                foreach(School s in schools)
                 {
-                    if (!schools.Contains(sc.School))
+                    if (s.SchoolWorkers.Contains(schoolWorker))
                     {
-                        schools.Add(sc.School);
+                        school = s;
+                        
                     }
                 }
+                
 
 
                 var userObj = new SchoolWorkerPersonalAccountViewModel()
                 {
                     GetUserInfo = result,
                     SchoolWorker=schoolWorker, 
-                    Schools=schools
+                    GetSchool=school
                 };
                 return View(userObj);
             }
@@ -139,7 +145,7 @@ namespace WebDiary.Controllers
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "Parent")]
         [Route("Account/ParentPersonalAccount")]
         public ViewResult ParentPersonalAccount()
         {
@@ -319,7 +325,7 @@ namespace WebDiary.Controllers
             var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
             if (user == null)
             {
-                ModelState.AddModelError("", "Incorrect login");
+                ModelState.AddModelError("", "Incorrect input data.");
                 return View(model);
             }
             

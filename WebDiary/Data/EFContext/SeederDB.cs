@@ -49,7 +49,6 @@ namespace WebDiary.Data.EFContext
                     PhoneNumber = "+44 20 7848 7346",
                     Email = "kingscollegelondonmathsschool@gmail.com",
                     Type = "Academy school Coeducational",
-                    Director = new SchoolWorker(),
                     SchoolWorkers = new List<SchoolWorker>(),
                     Students = new List<Student>()
                 };
@@ -79,9 +78,9 @@ namespace WebDiary.Data.EFContext
                 _context.SaveChanges();
                 var Directorperson = new Person { UserProfile = Directoruserprofile, IsActive = true, Schools = new List<School>()};
                 _context.Persons.Add(Directorperson);
-                var DirectorschoolWorker = new SchoolWorker { Person = Directorperson, Classes = new List<SchoolClass>(), RoleDescription = "Director and Geography teacher", Subjects = new List<Subject>() };
+                var DirectorschoolWorker = new SchoolWorker { Person = Directorperson, Classes = new List<SchoolClass>(), RoleDescription = "Director and Geography teacher", Subjects = new List<Subject>(), IsDirector=true };
                 _context.SchoolWorkers.Add(DirectorschoolWorker);
-                school.Director = DirectorschoolWorker;
+                school.SchoolWorkers.Add(DirectorschoolWorker);
                 
 
                 var student1email = "afsanamcmanus@gmail.com";
@@ -170,7 +169,7 @@ namespace WebDiary.Data.EFContext
                 _context.SaveChanges();
                 var Teacherperson = new Person { UserProfile = Teacheruserprofile, IsActive = true, Schools = new List<School>() };
                 _context.Persons.Add(Teacherperson);
-                var teacher = new SchoolWorker { Classes = new List<SchoolClass>(), Person = Teacherperson, RoleDescription = "Math Teacher", Subjects = new List<Subject>() };
+                var teacher = new SchoolWorker { Classes = new List<SchoolClass>(), Person = Teacherperson, RoleDescription = "Math Teacher", Subjects = new List<Subject>(), IsDirector=false };
                 _context.SchoolWorkers.Add(teacher);
                 school.SchoolWorkers.Add(teacher);
 

@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "_Layout";
+}
+@{
+    ViewData["Title"] = "Student | Schools";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Student | School</title>
+</head>
+<body>
+    <div class="columns">
+        <div class="column">
+            @{
+
+                foreach (School school in Model.GetSchools)
+                {
+                    @await Html.PartialAsync("_SchoolCardAdvanced", school);
+                }
+
+            }
+        </div>
+        @*<div class="column">
+                <div class="card">
+                    <div class="card-content">
+                        <section>
+                            <p class="subtitle is-6 is-uppercase is-family-code has-text-grey pb-0 mb-0">Schools:</p>
+                            @{
+
+                                foreach (School school in Model.Schools)
+                                {
+                                    @await Html.PartialAsync("_SchoolCard", school);
+                                }
+
+                            }
+                        </section>
+                        <section>
+                            <p class="subtitle is-6 is-uppercase is-family-code has-text-grey pb-0 mb-0 mt-2">School Classes:</p>
+                            @{
+                                foreach (SchoolClassStudent schoolClassStudent in Model.Student.SchoolClassStudents)
+                                {
+                                    @await Html.PartialAsync("_SchoolClassCard", schoolClassStudent);
+                                }
+                            }
+                        </section>
+                        <section>
+                            <p class="subtitle is-6 is-uppercase is-family-code has-text-grey pb-0 mb-0 mt-2">Parent:</p>
+                            <a class="title is-6 mt-0 pt-0">@Model.Student.Parent.UserProfile.FirstName @Model.Student.Parent.UserProfile.LastName</a>
+                        </section>
+                        <section>
+                            <p class="subtitle is-6 is-uppercase is-family-code has-text-grey pb-0 mb-0 mt-2">Siblings:</p>
+                            @{
+                                foreach (Student student in Model.Student.Siblings)
+                                {
+                                    @await Html.PartialAsync("_StudentCard", student);
+                                }
+                            }
+                        </section>
+
+                    </div>
+
+                </div>
+            </div>*@
+    </div>
+</body>
+</html>

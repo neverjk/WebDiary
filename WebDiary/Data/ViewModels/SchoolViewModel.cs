@@ -9,5 +9,6 @@ namespace WebDiary.Data.ViewModels
     public class SchoolViewModel
     {
         public School GetSchool { get; set; }
+        public SchoolWorker Director { get; set; }
     }
 }

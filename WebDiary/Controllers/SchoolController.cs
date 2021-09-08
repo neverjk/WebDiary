@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using WebDiary.Data.Interfaces;
 using WebDiary.Data.Models;
 using WebDiary.Data.ViewModels;
+using WebDiary.Models;
 
 namespace WebDiary.Controllers
 {
@@ -16,8 +20,8 @@ namespace WebDiary.Controllers
         {
             _schools = schools;
         }
-        [Route("School/GetSchool")]
-        public ViewResult GetSchool(string schoolId)
+        [Route("School/GetSchoolById")]
+        public ViewResult GetSchoolById(string schoolId)
         {
             //var info = HttpContext.Session.GetString("UserInfo");
             //if (info != null)
@@ -36,8 +40,82 @@ namespace WebDiary.Controllers
                 school = _schools.GetSchools.FirstOrDefault(x => x.Id.ToLower() == schoolId.ToLower());
 
             }
-            var schoolObj = new SchoolViewModel { GetSchool = school };
+            
+            var schoolObj = new SchoolViewModel { GetSchool = school, Director = school.SchoolWorkers.FirstOrDefault(x=>x.IsDirector) };
             return View(schoolObj);
+        }
+
+        [Route("School/GetSchoolSchoolWorker")]
+        public ViewResult GetSchoolSchoolWorker()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var schools = _schools.GetSchools;
+                var school = new School();
+                var director = new SchoolWorker();
+                foreach (School s in _schools.GetSchools)
+                {
+                    foreach(SchoolWorker sc in s.SchoolWorkers)
+                    {
+                        if (sc.Person.UserProfile.User.Id.ToLower() == id.ToLower())
+                        {
+                            school = s;
+                        }
+                        if (sc.IsDirector)
+                        {
+                            director = sc;
+                        }
+                    }
+                }
+
+
+                var schoolObj = new SchoolViewModel
+                {
+                    GetSchool = school,
+                    Director=director
+                };
+                return View(schoolObj);
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [Route("School/GetSchoolsStudent")]
+        public ViewResult GetSchoolsStudent()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                var schools = new List<School>();
+                foreach (School s in _schools.GetSchools)
+                {
+                    foreach (var student in s.Students)
+                    {
+                        if (student.Person.UserProfile.User.Id.ToLower() == id.ToLower())
+                        {
+                            schools.Add(s);
+                        }
+                    }
+                }
+
+
+                var schoolsObj = new ListSchoolViewModel
+                {
+                     GetSchools=schools
+                };
+                return View(schoolsObj);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [Route("School/GetSchoolList")]

@@ -15,9 +15,9 @@ namespace WebDiary.Data.Models
         public virtual Person Person { get; set; }
 
         public string RoleDescription { get; set; }
-
+        public bool IsDirector { get; set; }
         public virtual ICollection<SchoolClass> Classes { get; set; } 
         public virtual ICollection<Subject> Subjects { get; set; }
-        
+
     }
 }

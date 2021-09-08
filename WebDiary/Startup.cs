@@ -115,6 +115,10 @@ namespace WebDiary
                     name: "schoolworkerpersonalaccount",
                     template: "Account/{action}/{id?}",
                     defaults: new { Controller = "Account", action = "SchoolWorkerPersonalAccount" });
+                routes.MapRoute(
+                    name: "schoolbyid",
+                    template: "School/{action}/{id?}",
+                    defaults: new { Controller = "School", action = "GetSchoolById" });
             });
         }
     }

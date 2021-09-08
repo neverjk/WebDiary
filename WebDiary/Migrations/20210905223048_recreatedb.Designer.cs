@@ -10,8 +10,8 @@ using WebDiary.Data.EFContext;
 namespace WebDiary.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    [Migration("20210904161829_updatedb")]
-    partial class updatedb
+    [Migration("20210905223048_recreatedb")]
+    partial class recreatedb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -299,8 +299,6 @@ namespace WebDiary.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("DirectorId");
-
                     b.Property<string>("Email");
 
                     b.Property<string>("Name");
@@ -312,8 +310,6 @@ namespace WebDiary.Migrations
                     b.Property<string>("Type");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DirectorId");
 
                     b.HasIndex("PersonId");
 
@@ -362,6 +358,8 @@ namespace WebDiary.Migrations
             modelBuilder.Entity("WebDiary.Data.Models.SchoolWorker", b =>
                 {
                     b.Property<string>("Id");
+
+                    b.Property<bool>("IsDirector");
 
                     b.Property<string>("RoleDescription");
 
@@ -565,11 +563,6 @@ namespace WebDiary.Migrations
 
             modelBuilder.Entity("WebDiary.Data.Models.School", b =>
                 {
-                    b.HasOne("WebDiary.Data.Models.SchoolWorker", "Director")
-                        .WithMany()
-                        .HasForeignKey("DirectorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("WebDiary.Data.Models.Person")
                         .WithMany("Schools")
                         .HasForeignKey("PersonId")

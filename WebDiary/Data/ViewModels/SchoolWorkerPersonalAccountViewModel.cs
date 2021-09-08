@@ -11,6 +11,6 @@ namespace WebDiary.Data.ViewModels
     {
         public UserInfo GetUserInfo { get; set; }
         public SchoolWorker SchoolWorker { get; set; }
-        public List<School> Schools { get; set; }
+        public School GetSchool { get; set; }
     }
 }

@@ -18,10 +18,10 @@ namespace WebDiary.Data.Repository
             _context = dbContext;
         }
         public IEnumerable<SchoolClass> GetSchoolClasses => _context.SchoolClasses
-            .Include(x => x.SchoolClassStudents).ThenInclude(x=>x.Student)
-            .Include(x => x.Teacher)
-            .Include(x => x.School)
-            .Include(x => x.Subjects);
+            .Include(x => x.SchoolClassStudents).ThenInclude(x => x.Student).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
+            .Include(x => x.Teacher).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
+            .Include(x => x.School).ThenInclude(x => x.SchoolWorkers).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
+            .Include(x => x.Subjects).ThenInclude(x=>x.Teacher);
 
     }
 }

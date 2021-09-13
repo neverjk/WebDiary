@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebDiary.Migrations
 {
-    public partial class recreatedb : Migration
+    public partial class fixduplicate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,23 @@ namespace WebDiary.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Schools",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schools", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,7 +180,8 @@ namespace WebDiary.Migrations
                     LastName = table.Column<string>(maxLength: 75, nullable: false),
                     Image = table.Column<string>(maxLength: 150, nullable: true),
                     RegistrationDate = table.Column<DateTime>(nullable: false),
-                    Gender = table.Column<string>(maxLength: 75, nullable: false)
+                    Gender = table.Column<string>(maxLength: 75, nullable: false),
+                    BirthDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -212,36 +230,13 @@ namespace WebDiary.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Schools",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    Type = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    PersonId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Schools", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Schools_Persons_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Persons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SchoolWorkers",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
                     RoleDescription = table.Column<string>(nullable: true),
                     IsDirector = table.Column<bool>(nullable: false),
+                    IsClassTeacher = table.Column<bool>(nullable: false),
                     SchoolId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -267,7 +262,6 @@ namespace WebDiary.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     ParentId = table.Column<string>(nullable: true),
-                    SchoolId = table.Column<string>(nullable: true),
                     StudentId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -283,12 +277,6 @@ namespace WebDiary.Migrations
                         name: "FK_Students_Parents_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Parents",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Students_Schools_SchoolId",
-                        column: x => x.SchoolId,
-                        principalTable: "Schools",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -324,6 +312,30 @@ namespace WebDiary.Migrations
                         name: "FK_SchoolClasses_SchoolWorkers_TeacherId",
                         column: x => x.TeacherId,
                         principalTable: "SchoolWorkers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SchoolStudent",
+                columns: table => new
+                {
+                    SchoolId = table.Column<string>(nullable: false),
+                    StudentId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SchoolStudent", x => new { x.SchoolId, x.StudentId });
+                    table.ForeignKey(
+                        name: "FK_SchoolStudent_Schools_SchoolId",
+                        column: x => x.SchoolId,
+                        principalTable: "Schools",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SchoolStudent_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -576,7 +588,9 @@ namespace WebDiary.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolClasses_TeacherId",
                 table: "SchoolClasses",
-                column: "TeacherId");
+                column: "TeacherId",
+                unique: true,
+                filter: "[TeacherId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolClassStudent_StudentId",
@@ -584,9 +598,9 @@ namespace WebDiary.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Schools_PersonId",
-                table: "Schools",
-                column: "PersonId");
+                name: "IX_SchoolStudent_StudentId",
+                table: "SchoolStudent",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolWorkers_SchoolId",
@@ -597,11 +611,6 @@ namespace WebDiary.Migrations
                 name: "IX_Students_ParentId",
                 table: "Students",
                 column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_SchoolId",
-                table: "Students",
-                column: "SchoolId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_StudentId",
@@ -651,6 +660,9 @@ namespace WebDiary.Migrations
                 name: "SchoolClassStudent");
 
             migrationBuilder.DropTable(
+                name: "SchoolStudent");
+
+            migrationBuilder.DropTable(
                 name: "StudentSubject");
 
             migrationBuilder.DropTable(
@@ -678,10 +690,10 @@ namespace WebDiary.Migrations
                 name: "SchoolWorkers");
 
             migrationBuilder.DropTable(
-                name: "Schools");
+                name: "Persons");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "Schools");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

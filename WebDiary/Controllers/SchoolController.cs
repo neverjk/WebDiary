@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -20,6 +21,8 @@ namespace WebDiary.Controllers
         {
             _schools = schools;
         }
+
+        [Authorize]
         [Route("School/GetSchoolById")]
         public ViewResult GetSchoolById(string schoolId)
         {
@@ -45,6 +48,7 @@ namespace WebDiary.Controllers
             return View(schoolObj);
         }
 
+        [Authorize]
         [Route("School/GetSchoolSchoolWorker")]
         public ViewResult GetSchoolSchoolWorker()
         {
@@ -85,6 +89,7 @@ namespace WebDiary.Controllers
             }
         }
 
+        [Authorize]
         [Route("School/GetSchoolsStudent")]
         public ViewResult GetSchoolsStudent()
         {
@@ -96,9 +101,9 @@ namespace WebDiary.Controllers
                 var schools = new List<School>();
                 foreach (School s in _schools.GetSchools)
                 {
-                    foreach (var student in s.Students)
+                    foreach (var student in s.SchoolStudents)
                     {
-                        if (student.Person.UserProfile.User.Id.ToLower() == id.ToLower())
+                        if (student.Student.Person.UserProfile.User.Id.ToLower() == id.ToLower())
                         {
                             schools.Add(s);
                         }
@@ -118,6 +123,7 @@ namespace WebDiary.Controllers
             }
         }
 
+        [Authorize]
         [Route("School/GetSchoolList")]
         public ViewResult GetSchoolList()
         {

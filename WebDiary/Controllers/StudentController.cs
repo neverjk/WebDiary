@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using WebDiary.Data.Interfaces;
 using WebDiary.Data.Models;
 using WebDiary.Data.ViewModels;
+using WebDiary.Models;
 
 namespace WebDiary.Controllers
 {
@@ -16,143 +21,151 @@ namespace WebDiary.Controllers
         {
             _students = students;
         }
-        [Route("Student/GetStudent")]
-        public ViewResult GetStudent(string studentId)
+
+        [Authorize]
+        [Route("Student/StudentPublicAccount")]
+        public ActionResult StudentPublicAccount(string studentId)
         {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
+            
 
             Student student = null;
-            List<SchoolClass> schoolClasses = null;
+            var schoolClasses = new List<SchoolClass>();
             if (string.IsNullOrEmpty(studentId))
             {
 
             }
             else
             {
-                student = _students.GetStudents.FirstOrDefault(x => x.Id.ToLower() == studentId.ToLower());
-                foreach(Student s in _students.GetStudents)
+                var info = HttpContext.Session.GetString("UserInfo");
+                if (info != null)
                 {
-                    foreach(SchoolClassStudent sc in s.SchoolClassStudents)
+                    var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                    var id = result.UserId;
+                    if (id.ToLower() == studentId)
                     {
-                        schoolClasses.Add(sc.SchoolClass);
+                        return RedirectToAction("StudentPersonalAccount", "Account");
                     }
                 }
-
-            }
-            var studentsObj = new StudentViewModel { GetStudent=student, SchoolClasses= schoolClasses };
-            return View(studentsObj);
-        }
-
-        [Route("Student/GetStudentsClass")]
-        public ViewResult GetStudentsClass(string schoolClassId)
-        {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
-
-            List<Student> students = null;
-            SchoolClass schoolClass1 = null;
-            if (string.IsNullOrEmpty(schoolClassId))
-            {
-
-            }
-            else
-            {
-
-                //students = _students.GetStudents.Where(x => x.SchoolClasses.Contains(schoolClass));
-                foreach (Student s in _students.GetStudents)
+                student = _students.GetStudents.FirstOrDefault(x => x.Id.ToLower() == studentId.ToLower());
+               foreach(SchoolClassStudent scs in student.SchoolClassStudents)
                 {
-                    foreach(SchoolClassStudent sc in s.SchoolClassStudents)
-                    {
-                        if (sc.SchoolClass.Id.ToLower() == schoolClassId.ToLower())
-                        {
-                            students.Add(s);
-                            schoolClass1 = sc.SchoolClass;
-                        }
-                    }
+                    schoolClasses.Add(scs.SchoolClass);
                 }
                 
+
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = students, SchoolClass = schoolClass1, Subject=null, School=null };
+            var studentsObj = new StudentViewModel { GetStudent = student, SchoolClasses = schoolClasses };
             return View(studentsObj);
         }
 
-        [Route("Student/GetStudentsSchool")]
-        public ViewResult GetStudentsSchool(string schoolId)
+        [Authorize]
+        [Route("Student/GetStudents")]
+        public ViewResult GetStudents(string schoolId, string classId, string subjectId, string searchString)
         {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
-
-            List<Student> students = null;
+            
+            List<Student> allStudents = _students.GetStudents.ToList();
+            var students = new List<Student>();
             School school = null;
-            if (string.IsNullOrEmpty(schoolId))
+            SchoolClass schoolClass = null;
+            Subject subject = null;
+            var studentsObj = new ListStudentViewModel();
+            if (!string.IsNullOrEmpty(schoolId))
             {
+                foreach (Student s in allStudents)
+                {
+                    foreach (var sc in s.SchoolStudents)
+                    {
+                        if (sc.School.Id.ToLower() == schoolId.ToLower())
+                        {
+                            students.Add(s);
+                            school = sc.School;
+                        }
+                    }
+
+                }
+
+            }
+            else if (!string.IsNullOrEmpty(classId))
+            {
+                foreach (Student s in allStudents)
+                {
+                    foreach (var sc in s.SchoolClassStudents)
+                    {
+                        if (sc.SchoolClass.Id.ToLower() == classId.ToLower())
+                        {
+                            students.Add(s);
+                            school = sc.SchoolClass.School;
+                            schoolClass = sc.SchoolClass;
+                        }
+                    }
+
+                }
+            }
+            else if (!string.IsNullOrEmpty(subjectId))
+            {
+                foreach (Student s in allStudents)
+                {
+                    foreach (StudentSubject subj in s.StudentSubjects)
+                    {
+                        if (subj.Subject.Id.ToLower() == subjectId.ToLower())
+                        {
+                            students.Add(s);
+                            subject = subj.Subject;
+                            school = subj.Subject.SchoolClass.School;
+                            schoolClass = subj.Subject.SchoolClass;
+                        }
+
+                    }
+
+                }
 
             }
             else
             {
-                foreach (Student s in students)
-                {
-                    foreach(SchoolClassStudent s1 in s.SchoolClassStudents)
-                    {
-                        if (s1.SchoolClass.School.Id.ToLower() == schoolId.ToLower())
-                        {
-                            students.Add(s);
-                            school = s1.SchoolClass.School;
-                        }
-                    }
-                    
-                }
+                students = allStudents;
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = students, School=school, Subject=null, SchoolClass=null };
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var _students = new List<Student>();
+                foreach (var s in students)
+                {
+                    string fullName = s.Person.UserProfile.FirstName.ToString() + s.Person.UserProfile.MiddleName.ToString() + s.Person.UserProfile.LastName.ToString();
+                    if (fullName.ToLower().Contains(searchString.ToLower()))
+                    {
+                        _students.Add(s);
+                    }
+                }
+                students = _students;
+            }
+
+            studentsObj = new ListStudentViewModel { GetStudents = students.OrderBy(x => x.Person.UserProfile.LastName), School = school, Subject = subject, SchoolClass = schoolClass };
             return View(studentsObj);
         }
 
-        [Route("Student/GetStudentsSubject")]
-        public ViewResult GetStudentsSubject(string subjectId)
+        public ActionResult GetStudentsSchoolWorker()
         {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
-
-            List<Student> students = null;
-            Subject subject = null;
-            if (string.IsNullOrEmpty(subjectId))
+            var info = HttpContext.Session.GetString("UserInfo");
+            string _schoolId = null;
+            if (info != null)
             {
-
-            }
-            else
-            {
-                foreach (Student s in students)
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                foreach(var s in _students.GetStudents.ToList())
                 {
-                    foreach (StudentSubject s1 in s.StudentSubjects)
+                    foreach(var sc in s.SchoolStudents)
                     {
-                        if (s1.Subject.Id.ToLower() == subjectId.ToLower())
+                        foreach (var scw in sc.School.SchoolWorkers)
                         {
-                            students.Add(s);
-                            subject = s1.Subject;
+                            if (scw.Person.UserProfile.User.Id.ToLower() == id.ToLower())
+                            {
+                                _schoolId = sc.School.Id;
+                                break;
+                            }
                         }
                     }
-
                 }
             }
-            var studentsObj = new ListStudentViewModel { GetStudents = students, SchoolClass = null, Subject=subject, School=null };
-            return View(studentsObj);
+            return RedirectToAction("GetStudents", new { schoolId =_schoolId });
         }
 
         

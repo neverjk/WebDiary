@@ -301,15 +301,11 @@ namespace WebDiary.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("PersonId");
-
                     b.Property<string>("PhoneNumber");
 
                     b.Property<string>("Type");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("Schools");
                 });
@@ -335,7 +331,9 @@ namespace WebDiary.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.HasIndex("TeacherId");
+                    b.HasIndex("TeacherId")
+                        .IsUnique()
+                        .HasFilter("[TeacherId] IS NOT NULL");
 
                     b.ToTable("SchoolClasses");
                 });
@@ -353,9 +351,24 @@ namespace WebDiary.Migrations
                     b.ToTable("SchoolClassStudent");
                 });
 
+            modelBuilder.Entity("WebDiary.Data.Models.SchoolStudent", b =>
+                {
+                    b.Property<string>("SchoolId");
+
+                    b.Property<string>("StudentId");
+
+                    b.HasKey("SchoolId", "StudentId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("SchoolStudent");
+                });
+
             modelBuilder.Entity("WebDiary.Data.Models.SchoolWorker", b =>
                 {
                     b.Property<string>("Id");
+
+                    b.Property<bool>("IsClassTeacher");
 
                     b.Property<bool>("IsDirector");
 
@@ -376,15 +389,11 @@ namespace WebDiary.Migrations
 
                     b.Property<string>("ParentId");
 
-                    b.Property<string>("SchoolId");
-
                     b.Property<string>("StudentId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ParentId");
-
-                    b.HasIndex("SchoolId");
 
                     b.HasIndex("StudentId");
 
@@ -429,6 +438,8 @@ namespace WebDiary.Migrations
             modelBuilder.Entity("WebDiary.Data.Models.UserProfile", b =>
                 {
                     b.Property<string>("Id");
+
+                    b.Property<DateTime>("BirthDate");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -559,14 +570,6 @@ namespace WebDiary.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("WebDiary.Data.Models.School", b =>
-                {
-                    b.HasOne("WebDiary.Data.Models.Person")
-                        .WithMany("Schools")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("WebDiary.Data.Models.SchoolClass", b =>
                 {
                     b.HasOne("WebDiary.Data.Models.School", "School")
@@ -575,8 +578,8 @@ namespace WebDiary.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("WebDiary.Data.Models.SchoolWorker", "Teacher")
-                        .WithMany("Classes")
-                        .HasForeignKey("TeacherId")
+                        .WithOne("Class")
+                        .HasForeignKey("WebDiary.Data.Models.SchoolClass", "TeacherId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -593,6 +596,19 @@ namespace WebDiary.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("WebDiary.Data.Models.SchoolStudent", b =>
+                {
+                    b.HasOne("WebDiary.Data.Models.School", "School")
+                        .WithMany("SchoolStudents")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("WebDiary.Data.Models.Student", "Student")
+                        .WithMany("SchoolStudents")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("WebDiary.Data.Models.SchoolWorker", b =>
                 {
                     b.HasOne("WebDiary.Data.Models.Person", "Person")
@@ -600,7 +616,7 @@ namespace WebDiary.Migrations
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("WebDiary.Data.Models.School")
+                    b.HasOne("WebDiary.Data.Models.School", "School")
                         .WithMany("SchoolWorkers")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -616,11 +632,6 @@ namespace WebDiary.Migrations
                     b.HasOne("WebDiary.Data.Models.Parent", "Parent")
                         .WithMany("Kids")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("WebDiary.Data.Models.School")
-                        .WithMany("Students")
-                        .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("WebDiary.Data.Models.Student")

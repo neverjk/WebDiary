@@ -19,7 +19,9 @@ namespace WebDiary.Data.Repository
             _context = dbContext;
         }
         public IEnumerable<SchoolWorker> GetSchoolWorkers => _context.SchoolWorkers
-            .Include(x => x.Classes).ThenInclude(x=>x.School)
-            .Include(x => x.Subjects);
+            .Include(x=>x.Person).ThenInclude(x=>x.UserProfile).ThenInclude(x=>x.User)
+            .Include(x=>x.School)
+            .Include(x => x.Class).ThenInclude(x=>x.School)
+            .Include(x => x.Subjects).ThenInclude(x=>x.SchoolClass);
     }
 }

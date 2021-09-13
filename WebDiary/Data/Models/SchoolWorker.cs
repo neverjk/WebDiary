@@ -16,8 +16,13 @@ namespace WebDiary.Data.Models
 
         public string RoleDescription { get; set; }
         public bool IsDirector { get; set; }
-        public virtual ICollection<SchoolClass> Classes { get; set; } 
+        public bool IsClassTeacher { get; set; }
+        public virtual SchoolClass Class { get; set; } 
         public virtual ICollection<Subject> Subjects { get; set; }
+
+        [ForeignKey("School")]
+        public string SchoolId { get; set; }
+        public virtual School School { get; set; }
 
     }
 }

@@ -23,7 +23,7 @@
             <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         </environment>*@
 </head>
-<body>
+<body style="height:100%">
     <section class="section">
 
         <nav class="navbar is-dark has-shadow is-fixed-top pl-3 pr-3 pt-2 pb-2">
@@ -212,105 +212,114 @@
     </section>
 
 
-    <div class="container body-content ml-5 ">
-        <div class="columns ">
-            @{if (User.Identity.IsAuthenticated)
-                {
-                    if (User.IsInRole("Student"))
+    <div class="container body-content ml-5 " >
+
+        @{ if (User.Identity.IsAuthenticated)
+            { <div class="columns ">
+                    @if (User.IsInRole("Student"))
                     {<div class="column is-one-quarter ">
-                            <aside class="menu ml-0 ">
-                                <p class="menu-label">
-                                    School
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a asp-area="" asp-controller="School" asp-action="GetSchoolsStudent">School</a></li>
-                                    <li><a>Class</a></li>
-                                    <li><a>Schedule</a></li>
-                                    <li><a>Journal</a></li>
-                                </ul>
-                                <p class="menu-label">
-                                    Account
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a>Personal account</a></li>
-                                </ul>
-                            </aside>
-                        </div>
+                        <aside class="menu ml-0 ">
+                            <p class="menu-label">
+                                School
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="School" asp-action="GetSchoolsStudent">School</a></li>
+                                <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListStudent">Class</a></li>
+                                <li><a>Schedule</a></li>
+                                <li><a>Journal</a></li>
+                            </ul>
+                            <p class="menu-label">
+                                Account
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="Account" asp-action="PersonalAccount">Personal account</a></li>
+                            </ul>
+                        </aside>
+                    </div>
                     }
                     else if (User.IsInRole("Parent"))
                     {<div class="column is-one-quarter">
-                            <aside class="menu ml-0 ">
-                                <p class="menu-label">
-                                    School
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a>Kids</a></li>
-                                    <li><a>School</a></li>
-                                    <li><a>Class</a></li>
-                                    <li><a>Schedule</a></li>
-                                    <li><a>Journal</a></li>
-                                </ul>
-                                <p class="menu-label">
-                                    Account
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a>Personal account</a></li>
-                                </ul>
-                            </aside>
-                        </div>
+                        <aside class="menu ml-0 ">
+                            <p class="menu-label">
+                                School
+                            </p>
+                            <ul class="menu-list">
+                                <li><a>Kids</a></li>
+                                <li><a>School</a></li>
+                                <li><a>Class</a></li>
+                                <li><a>Schedule</a></li>
+                                <li><a>Journal</a></li>
+                            </ul>
+                            <p class="menu-label">
+                                Account
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="Account" asp-action="PersonalAccount">Personal account</a></li>
+                            </ul>
+                        </aside>
+                    </div>
                     }
                     else if (User.IsInRole("Director") || User.IsInRole("Manager"))
                     {<div class="column is-one-quarter">
-                            <aside class="menu ml-0 ">
-                                <p class="menu-label">
-                                    School
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
-                                    <li><a>Students</a></li>
-                                    <li><a>Classes</a></li>
-                                    <li><a>Workers</a></li>
-                                    <li><a>Schedule</a></li>
-                                    <li><a>Journal</a></li>
-                                </ul>
-                                <p class="menu-label">
-                                    Account
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a>Personal account</a></li>
-                                </ul>
-                            </aside>
-                        </div>
+                        <aside class="menu ml-0 ">
+                            <p class="menu-label">
+                                School
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
+                                <li><a asp-area="" asp-controller="Student" asp-action="GetStudentsSchoolWorker">Students</a></li>
+                                <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListSchoolWorker">Classes</a></li>
+                                <li><a>Workers</a></li>
+                                <li><a>Schedule</a></li>
+                                <li><a>Journal</a></li>
+                            </ul>
+                            <p class="menu-label">
+                                Account
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="Account" asp-action="PersonalAccount">Personal account</a></li>
+                            </ul>
+                        </aside>
+                    </div>
                     }
                     else if (User.IsInRole("Teacher"))
                     {<div class="column is-one-quarter">
-                            <aside class="menu ml-0 ">
-                                <p class="menu-label">
-                                    School
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
-                                    <li><a>Class</a></li>
-                                    <li><a>Subjects</a></li>
-                                    <li><a>Teachers</a></li>
-                                    <li><a>Teacher Schedule</a></li>
-                                    <li><a>Journal</a></li>
-                                </ul>
-                                <p class="menu-label">
-                                    Account
-                                </p>
-                                <ul class="menu-list">
-                                    <li><a>Personal account</a></li>
-                                </ul>
-                            </aside>
-                        </div>
+                        <aside class="menu ml-0 ">
+                            <p class="menu-label">
+                                School
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
+                                <li><a>Class</a></li>
+                                <li><a>Subjects</a></li>
+                                <li><a>Teachers</a></li>
+                                <li><a>Teacher Schedule</a></li>
+                                <li><a>Journal</a></li>
+                            </ul>
+                            <p class="menu-label">
+                                Account
+                            </p>
+                            <ul class="menu-list">
+                                <li><a asp-area="" asp-controller="Account" asp-action="PersonalAccount">Personal account</a></li>
+                            </ul>
+                        </aside>
+                    </div>
                     }
-                }
+                    <div class="column is-justify-content-center">
+                        @RenderBody()
+
+                    </div>
+                </div>
             }
-            <div class="column">
-                @RenderBody()
-            </div>
-        </div>
+            else
+            {
+                <div class="container is-align-content-center">
+                    @RenderBody()
+                </div>
+            }
+        }
+
+
 
         <hr />
         <footer>

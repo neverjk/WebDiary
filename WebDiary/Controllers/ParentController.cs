@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebDiary.Data.Interfaces;
 using WebDiary.Data.Models;
 using WebDiary.Data.ViewModels;
+using WebDiary.Models;
 
 namespace WebDiary.Controllers
 {
@@ -16,6 +19,37 @@ namespace WebDiary.Controllers
         public ParentController(IParent parents)
         {
             _parents = parents;
+        }
+
+        [Authorize]
+        [Route("Parent/ParentPublicAccount")]
+        public ActionResult ParentPublicAccount(string parentId)
+        {
+            Parent parent = null;
+            var kids = new List<Student>();
+            if (string.IsNullOrEmpty(parentId))
+            {
+
+            }
+            else
+            {
+                var info = HttpContext.Session.GetString("UserInfo");
+                if (info != null)
+                {
+                    var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                    var id = result.UserId;
+                    if (id.ToLower() == parentId)
+                    {
+                        return RedirectToAction("ParentPersonalAccount", "Account");
+                    }
+                }
+                parent = _parents.GetParents.FirstOrDefault(x => x.Id.ToLower() == parentId.ToLower());
+                
+
+
+            }
+            var parentObj = new ParentViewModel {  GetParent=parent, Kids=parent.Kids.ToList() };
+            return View(parentObj);
         }
 
         [Route("Parent/GetParent")]
@@ -38,7 +72,7 @@ namespace WebDiary.Controllers
                 parent = _parents.GetParents.FirstOrDefault(x => x.Id.ToLower() == parentId.ToLower());
 
             }
-            var parentObj = new ParentViewModel { GetParent = parent, Kids = parent.Kids };
+            var parentObj = new ParentViewModel { GetParent = parent, Kids = parent.Kids.ToList() };
             return View(parentObj);
         }
 

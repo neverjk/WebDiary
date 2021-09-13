@@ -96,7 +96,7 @@ namespace WebDiary
             app.UseStaticFiles();
             app.UseSession();
             //app.UseCookiePolicy();
-            //SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
+            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
 
             app.UseMvc(routes =>
             {
@@ -119,6 +119,27 @@ namespace WebDiary
                     name: "schoolbyid",
                     template: "School/{action}/{id?}",
                     defaults: new { Controller = "School", action = "GetSchoolById" });
+                routes.MapRoute(
+                    name: "studentfilter",
+                    template: "Student/{action}/{schoolId?}/{classId?}/{subjectId?}/{searchString?}",
+                    defaults: new { Controller = "Student", action = "GetStudents" });
+                
+                routes.MapRoute(
+                    name: "studentpublicprofile",
+                    template: "Student/{action}/{id?}",
+                    defaults: new { Controller = "Student", action = "StudentPublicAccount" });
+                routes.MapRoute(
+                    name: "schoolworkerpublicprofile",
+                    template: "SchoolWorker/{action}/{id?}",
+                    defaults: new { Controller = "SchoolWorker", action = "SchoolWorkerPublicAccount" });
+                routes.MapRoute(
+                    name: "schoolclassfilter",
+                    template: "SchoolClass/{action}/{schoolId?}/{studentId?}/{searchString?}",
+                    defaults: new { Controller = "SchoolClass", action = "SchoolClassList" });
+                routes.MapRoute(
+                    name: "schoolclassbyid",
+                    template: "SchoolClass/{action}/{id?}",
+                    defaults: new { Controller = "SchoolClass", action = "SchoolClass" });
             });
         }
     }

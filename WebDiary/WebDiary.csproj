@@ -14,6 +14,16 @@
     <Compile Remove="Migrations\20210903153128_createDB.Designer.cs" />
     <Compile Remove="Migrations\20210904161829_updatedb.cs" />
     <Compile Remove="Migrations\20210904161829_updatedb.Designer.cs" />
+    <Compile Remove="Migrations\20210905223048_recreatedb.cs" />
+    <Compile Remove="Migrations\20210905223048_recreatedb.Designer.cs" />
+    <Compile Remove="Migrations\20210908120951_updatedb.cs" />
+    <Compile Remove="Migrations\20210908120951_updatedb.Designer.cs" />
+    <Compile Remove="Migrations\20210908121220_createdb.cs" />
+    <Compile Remove="Migrations\20210908121220_createdb.Designer.cs" />
+    <Compile Remove="Migrations\20210908121735_createdb5.cs" />
+    <Compile Remove="Migrations\20210908121735_createdb5.Designer.cs" />
+    <Compile Remove="Migrations\20210912135355_fixduplicate.cs" />
+    <Compile Remove="Migrations\20210912135355_fixduplicate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

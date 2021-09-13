@@ -23,6 +23,8 @@ namespace WebDiary.Data.Models
         public DateTime RegistrationDate { get; set; }
         [Required, StringLength(75)]
         public string Gender { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime BirthDate { get; set; }
 
         public virtual DbUser User { get; set; }
     }

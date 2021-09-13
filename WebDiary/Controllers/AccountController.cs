@@ -41,23 +41,37 @@ namespace WebDiary.Controllers
 
         [Authorize]
         [Route("Account/PersonalAccount")]
-        public ViewResult PersonalAccount()
+        public ActionResult PersonalAccount()
         {
-            var info = HttpContext.Session.GetString("UserInfo");
-            if (info != null)
+            //var info = HttpContext.Session.GetString("UserInfo");
+            //if (info != null)
+            //{
+            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
+            //    var id = result.UserId;
+            //    var userObj = new PersonalAccountViewModel()
+            //    {
+            //        GetUserInfo = result
+            //    };
+            //    return View(userObj);
+            //}
+            //else
+            //{
+            //    return View();
+            //}
+            if (User.IsInRole("Student"))
             {
-                var result = JsonConvert.DeserializeObject<UserInfo>(info);
-                var id = result.UserId;
-                var userObj = new PersonalAccountViewModel()
-                {
-                    GetUserInfo = result
-                };
-                return View(userObj);
+                return RedirectToAction("StudentPersonalAccount");
             }
-            else
+            else if (User.IsInRole("SchoolWorker") || User.IsInRole("Director") || User.IsInRole("Manager") || User.IsInRole("Teacher"))
             {
-                return View();
+                return RedirectToAction("SchoolWorkerPersonalAccount");
             }
+            else if (User.IsInRole("Parent"))
+            {
+                return RedirectToAction("ParentPersonalAccount");
+            }
+            return RedirectToAction("Index", "Home");
+            
 
         }
 
@@ -71,17 +85,18 @@ namespace WebDiary.Controllers
                 var result = JsonConvert.DeserializeObject<UserInfo>(info);
                 var id = result.UserId;
                 var students = _context.Students.Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x=>x.User)
-                    .Include(x=>x.Person).ThenInclude(x=>x.Schools)
-                    .Include(x=>x.Parent).ThenInclude(x=>x.UserProfile)
-                    .Include(x=>x.Siblings).ThenInclude(x=>x.Person).ThenInclude(x=>x.UserProfile)
+                    .Include(x=>x.SchoolStudents).ThenInclude(x=>x.School)
+                    .Include(x=>x.SchoolStudents).ThenInclude(x=>x.School)
+                    .Include(x=>x.Parent).ThenInclude(x=>x.UserProfile).ThenInclude(x => x.User)
+                    .Include(x=>x.Siblings).ThenInclude(x=>x.Person).ThenInclude(x=>x.UserProfile).ThenInclude(x=>x.User)
                     .Include(x=>x.SchoolClassStudents).ThenInclude(x=>x.SchoolClass).ThenInclude(x=>x.School);
                 var student = students.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
                 var schools = new List<School>();
-                foreach(SchoolClassStudent scs in student.SchoolClassStudents)
+                foreach(SchoolStudent scs in student.SchoolStudents)
                 {
-                    if (!schools.Contains(scs.SchoolClass.School))
+                    if (!schools.Contains(scs.School))
                     {
-                        schools.Add(scs.SchoolClass.School);
+                        schools.Add(scs.School);
                     }
                 }
                 
@@ -111,10 +126,10 @@ namespace WebDiary.Controllers
                 var result = JsonConvert.DeserializeObject<UserInfo>(info);
                 var id = result.UserId;
                 var schoolWorkers = _context.SchoolWorkers
-                    .Include(x => x.Person).ThenInclude(x => x.Schools)
+                    .Include(x=>x.School)
                     .Include(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User)
                     .Include(x => x.Subjects).ThenInclude(x=>x.SchoolClass)
-                    .Include(x => x.Classes).ThenInclude(x => x.School);
+                    .Include(x => x.Class).ThenInclude(x => x.School);
                 
                 var schoolWorker = schoolWorkers.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
                 var schools = _context.Schools.Include(x => x.SchoolWorkers);

@@ -1,28 +1,28 @@
-﻿@{
+﻿@*@{
     Layout = "_Layout";
 }
 @{
-    ViewData["Title"] = "Student | Schools";
+    ViewData["Title"] = "School | Students";
 }
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Student | School</title>
+    <title>School | Students</title>
 </head>
 <body>
     <div class="columns">
         <div class="column">
             @{
 
-                foreach (School school in Model.GetSchools)
+                foreach (Student s in Model.GetStudents)
                 {
-                    @await Html.PartialAsync("_SchoolCardAdvanced", school);
+                    @await Html.PartialAsync("_StudentCardAdvanced", s);
                 }
 
             }
         </div>
-       
+
     </div>
 </body>
-</html>
+</html>*@

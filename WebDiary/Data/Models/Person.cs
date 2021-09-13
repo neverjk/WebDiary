@@ -14,7 +14,6 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
         public virtual UserProfile UserProfile { get; set; }
 
-        public virtual ICollection<School> Schools { get; set; }
         public bool IsActive { get; set; }
 
     }

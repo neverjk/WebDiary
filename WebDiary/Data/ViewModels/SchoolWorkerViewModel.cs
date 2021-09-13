@@ -9,7 +9,7 @@ namespace WebDiary.Data.ViewModels
     public class SchoolWorkerViewModel
     {
         public SchoolWorker GetSchoolWorker { get; set; }
-        public ICollection<SchoolClass> Classes { get; set; }
+        public SchoolClass Class { get; set; }
         public ICollection<Subject> Subjects { get; set; }
     }
 }

@@ -14,7 +14,9 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
+        [DataType(DataType.Date)]
         public DateTime CreateDate { get; set; }
+        [DataType(DataType.Date)]
         public DateTime FinalDate { get; set; }
 
         [ForeignKey("School")]

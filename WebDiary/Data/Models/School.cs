@@ -20,7 +20,7 @@ namespace WebDiary.Data.Models
         public string Description { get; set; }
 
         public virtual ICollection<SchoolWorker> SchoolWorkers { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
+        public ICollection<SchoolStudent> SchoolStudents { get; set; }
         public virtual ICollection<SchoolClass> Classes { get; set; }
 
     }

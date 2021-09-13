@@ -49,6 +49,17 @@ namespace WebDiary.Data.EFContext
                 .WithMany(c => c.SchoolClassStudents)
                 .HasForeignKey(sc => sc.SchoolClassId);
 
+            builder.Entity<SchoolStudent>()
+                .HasKey(x => new { x.SchoolId, x.StudentId });
+            builder.Entity<SchoolStudent>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.SchoolStudents)
+                .HasForeignKey(sc => sc.StudentId);
+            builder.Entity<SchoolStudent>()
+                .HasOne(sc => sc.School)
+                .WithMany(c => c.SchoolStudents)
+                .HasForeignKey(sc => sc.SchoolId);
+
             builder.Entity<StudentSubject>()
                 .HasKey(x => new { x.SubjectId, x.StudentId });
             builder.Entity<StudentSubject>()

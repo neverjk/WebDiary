@@ -17,7 +17,7 @@ namespace WebDiary.Data.Models
         public virtual ICollection<Student> Siblings { get; set; }
         public virtual ICollection<Mark> Marks { get; set; }
         public ICollection<StudentSubject> StudentSubjects { get; set; }
-
+        public ICollection<SchoolStudent> SchoolStudents { get; set; }
 
         [ForeignKey("Parent")]
         public string ParentId { get; set; }

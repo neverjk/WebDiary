@@ -28,6 +28,9 @@ namespace WebDiary.Data.Models
 
         public virtual ICollection<SchoolClassStudent> SchoolClassStudents { get; set; }
         public virtual ICollection<Subject> Subjects { get; set; }
-        public virtual ICollection<Schedule> Schedules { get; set; }
+
+        [ForeignKey("Schedule")]
+        public string ScheduleId { get; set; }
+        public virtual Schedule Schedule { get; set; }
     }
 }

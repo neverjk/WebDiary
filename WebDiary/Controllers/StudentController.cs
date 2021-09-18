@@ -46,6 +46,10 @@ namespace WebDiary.Controllers
                         return RedirectToAction("StudentPersonalAccount", "Account");
                     }
                 }
+                else
+                {
+                    return RedirectToAction("Logout", "Account");
+                }
                 student = _students.GetStudents.FirstOrDefault(x => x.Id.ToLower() == studentId.ToLower());
                foreach(SchoolClassStudent scs in student.SchoolClassStudents)
                 {
@@ -164,6 +168,10 @@ namespace WebDiary.Controllers
                         }
                     }
                 }
+            }
+            else
+            {
+                return RedirectToAction("Logout", "Account");
             }
             return RedirectToAction("GetStudents", new { schoolId =_schoolId });
         }

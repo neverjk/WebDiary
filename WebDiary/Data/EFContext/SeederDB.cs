@@ -210,7 +210,7 @@ namespace WebDiary.Data.EFContext
                 parent.Kids.Add(student2);
                 _context.Parents.Add(parent);
 
-                var schoolClass = new SchoolClass { CreateDate = DateTime.Now, FinalDate = DateTime.Now.AddDays(365), IsActive = true, Name = "10B", SchoolClassStudents = new List<SchoolClassStudent>(), Subjects = new List<Subject>(), Teacher = teacher };
+                var schoolClass = new SchoolClass { CreateDate = new System.DateTime(2021, 09, 01, 00, 00, 00), FinalDate = new System.DateTime(2021, 09, 01, 00, 00, 00).AddDays(365), IsActive = true, Name = "10B", SchoolClassStudents = new List<SchoolClassStudent>(), Subjects = new List<Subject>(), Teacher = teacher };
                 _context.SchoolClasses.Add(schoolClass);
                 _context.SaveChanges();
                 school.Classes.Add(schoolClass);
@@ -229,16 +229,22 @@ namespace WebDiary.Data.EFContext
                 subject2.StudentSubjects.Add(new StudentSubject { Student = student1, Subject = subject2 });
                 subject2.StudentSubjects.Add(new StudentSubject { Student = student2, Subject = subject2 });
 
-                var journal = new Journal { Subject = subject, Marks = new List<Mark>() };
+                var journal = new Journal { Subject = subject, Marks = new List<Mark>(), LessonInfos=new List<LessonInfo>() };
                 _context.Journals.Add(journal);
                 _context.SaveChanges();
                 var mark1 = new Mark { Description = "Classwork", Journal = journal, MarkType = MarkType.Current, Student = student1, Value = 12, TimeSet = DateTime.Now };
                 var mark2 = new Mark { Description = "Stereometry", Journal = journal, MarkType = MarkType.Semester1, Student = student2, Value = 9, TimeSet = DateTime.Now.AddDays(-5) };
+                var lessonInfo1 = new LessonInfo { Date = DateTime.Now.AddDays(-2), Homework = "p. 39 ex 1-4", Journal = journal, Theme = "Triangle" };
+                var lessonInfo1_2 = new LessonInfo { Date = DateTime.Now.AddDays(-1), Homework = "Essay", Journal = journal, Theme = "Triangle" };
                 _context.Marks.Add(mark1);
                 _context.Marks.Add(mark2);
+                _context.LessonInfos.Add(lessonInfo1);
+                _context.LessonInfos.Add(lessonInfo1_2);
                 _context.SaveChanges();
                 journal.Marks.Add(mark1);
                 journal.Marks.Add(mark2);
+                journal.LessonInfos.Add(lessonInfo1);
+                journal.LessonInfos.Add(lessonInfo1_2);
                 subject.Journals.Add(journal);
 
                 var journal2 = new Journal { Subject = subject2, Marks = new List<Mark>() };
@@ -246,22 +252,28 @@ namespace WebDiary.Data.EFContext
                 _context.SaveChanges();
                 var mark3 = new Mark { Description = "Homework", Journal = journal2, MarkType = MarkType.Current, Student = student1, Value = 5, TimeSet = DateTime.Now.AddDays(-2) };
                 var mark4 = new Mark { Description = "Asia", Journal = journal2, MarkType = MarkType.Semester1, Student = student2, Value = 8, TimeSet = DateTime.Now.AddDays(-10) };
+                var lessonInfo2 = new LessonInfo { Date = DateTime.Now.AddDays(2), Homework = "test", Journal = journal2, Theme = "Asia" };
+                var lessonInfo2_2 = new LessonInfo { Date = DateTime.Now.AddDays(1), Homework = "Essay", Journal = journal2, Theme = "Asia" };
                 _context.Marks.Add(mark3);
                 _context.Marks.Add(mark4);
+                _context.LessonInfos.Add(lessonInfo2);
+                _context.LessonInfos.Add(lessonInfo2_2);
                 _context.SaveChanges();
                 journal2.Marks.Add(mark3);
                 journal2.Marks.Add(mark4);
+                journal.LessonInfos.Add(lessonInfo2);
+                journal.LessonInfos.Add(lessonInfo2_2);
                 subject2.Journals.Add(journal2);
 
                 teacher.Class = schoolClass;
 
 
                 var schedule = new Schedule { Lessons = new List<Lesson>(), SchoolClass = schoolClass };
-                var lesson1 = new Lesson { Cabinet = "16", Homework = "p. 39 ex 1-4", Subject = subject, Theme = "Triangle", Time = "8:30", WeekDay = 5 };
-                var lesson2 = new Lesson { Cabinet = "15", Homework = "Essay", Subject = subject, Theme = "Triangle", Time = "9:30", WeekDay = 4 };
+                var lesson1 = new Lesson { Cabinet = "16",  Subject = subject,  Time=new System.DateTime ( 2000, 1, 01, 8, 30, 00 ), WeekDay = 5 };
+                var lesson2 = new Lesson { Cabinet = "15",  Subject = subject, Time = new System.DateTime(2000, 1, 01, 9, 30, 00), WeekDay = 4 };
 
-                var lesson3 = new Lesson { Cabinet = "8", Homework = "Test", Subject = subject2, Theme = "Asia", Time = "12:25", WeekDay = 2 };
-                var lesson4 = new Lesson { Cabinet = "15", Homework = "Essay", Subject = subject2, Theme = "Asia", Time = "13:50", WeekDay = 5 };
+                var lesson3 = new Lesson { Cabinet = "8", Subject = subject2, Time = new System.DateTime(2000, 1, 01, 12, 25, 00), WeekDay = 2 };
+                var lesson4 = new Lesson { Cabinet = "15",Subject = subject2, Time = new System.DateTime(2000, 1, 01, 13, 15, 00), WeekDay = 5 };
                 _context.Schedules.Add(schedule);
                 _context.Lessons.Add(lesson1);
                 _context.Lessons.Add(lesson2);
@@ -272,8 +284,7 @@ namespace WebDiary.Data.EFContext
                 schedule.Lessons.Add(lesson2);
                 schedule.Lessons.Add(lesson3);
                 schedule.Lessons.Add(lesson4);
-                schoolClass.Schedules = new List<Schedule>();
-                schoolClass.Schedules.Add(schedule);
+                schoolClass.Schedule=schedule;
                 _context.SaveChanges();
 
 

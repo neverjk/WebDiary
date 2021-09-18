@@ -19,8 +19,10 @@ namespace WebDiary.Data.Repository
         }
 
         public IEnumerable<Schedule> GetSchedules => _context.Schedules
-            .Include(x => x.SchoolClass)
-            .Include(x => x.Lessons).ThenInclude(x=>x.Subject);
+            .Include(x => x.SchoolClass).ThenInclude(x => x.SchoolClassStudents).ThenInclude(x => x.Student).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile)
+            .Include(x => x.SchoolClass).ThenInclude(x => x.School).ThenInclude(x=>x.SchoolWorkers)
+            .Include(x => x.Lessons).ThenInclude(x => x.Subject).ThenInclude(x => x.StudentSubjects).ThenInclude(x => x.Student).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile)
+            .Include(x => x.Lessons).ThenInclude(x => x.Subject).ThenInclude(x => x.Teacher).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile);
 
     }
 }

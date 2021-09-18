@@ -45,7 +45,7 @@
                             <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1" asp-area="" asp-controller="Student" asp-action="GetStudents" asp-route-schoolId="@Model.GetSchool.Id">Students</a>
                         </div>
                         <div class="column has-text-centered">
-                            <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1 ">Workers</a>
+                            <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1 " asp-area="" asp-controller="SchoolWorker" asp-action="SchoolWorkersList" asp-route-schoolId="@Model.GetSchool.Id">Workers</a>
                         </div>
                         <div class="column has-text-centered">
                             <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1" asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesList" asp-route-schoolId="@Model.GetSchool.Id">Classes</a>

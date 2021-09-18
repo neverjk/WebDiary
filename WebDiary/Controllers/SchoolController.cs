@@ -50,7 +50,7 @@ namespace WebDiary.Controllers
 
         [Authorize]
         [Route("School/GetSchoolSchoolWorker")]
-        public ViewResult GetSchoolSchoolWorker()
+        public ActionResult GetSchoolSchoolWorker()
         {
             var info = HttpContext.Session.GetString("UserInfo");
             if (info != null)
@@ -85,13 +85,13 @@ namespace WebDiary.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Logout", "Account");
             }
         }
 
         [Authorize]
         [Route("School/GetSchoolsStudent")]
-        public ViewResult GetSchoolsStudent()
+        public ActionResult GetSchoolsStudent()
         {
             var info = HttpContext.Session.GetString("UserInfo");
             if (info != null)
@@ -119,7 +119,7 @@ namespace WebDiary.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Logout", "Account");
             }
         }
 

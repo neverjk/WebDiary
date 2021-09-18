@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebDiary.Migrations
 {
-    public partial class fixduplicate : Migration
+    public partial class fixsc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -288,35 +288,6 @@ namespace WebDiary.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SchoolClasses",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false),
-                    CreateDate = table.Column<DateTime>(nullable: false),
-                    FinalDate = table.Column<DateTime>(nullable: false),
-                    SchoolId = table.Column<string>(nullable: true),
-                    TeacherId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SchoolClasses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SchoolClasses_Schools_SchoolId",
-                        column: x => x.SchoolId,
-                        principalTable: "Schools",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SchoolClasses_SchoolWorkers_TeacherId",
-                        column: x => x.TeacherId,
-                        principalTable: "SchoolWorkers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SchoolStudent",
                 columns: table => new
                 {
@@ -336,6 +307,91 @@ namespace WebDiary.Migrations
                         name: "FK_SchoolStudent_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LessonInfos",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Theme = table.Column<string>(nullable: true),
+                    Homework = table.Column<string>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    JournalId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LessonInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Value = table.Column<double>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    TimeSet = table.Column<DateTime>(nullable: false),
+                    StudentId = table.Column<string>(nullable: true),
+                    MarkType = table.Column<int>(nullable: false),
+                    JournalId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Marks_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lessons",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    WeekDay = table.Column<int>(nullable: false),
+                    Cabinet = table.Column<string>(nullable: true),
+                    Time = table.Column<DateTime>(nullable: false),
+                    SubjectId = table.Column<string>(nullable: true),
+                    ScheduleId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SchoolClasses",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    FinalDate = table.Column<DateTime>(nullable: false),
+                    SchoolId = table.Column<string>(nullable: true),
+                    TeacherId = table.Column<string>(nullable: true),
+                    ScheduleId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SchoolClasses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SchoolClasses_Schools_SchoolId",
+                        column: x => x.SchoolId,
+                        principalTable: "Schools",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SchoolClasses_SchoolWorkers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "SchoolWorkers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -428,36 +484,6 @@ namespace WebDiary.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lessons",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    WeekDay = table.Column<int>(nullable: false),
-                    Cabinet = table.Column<string>(nullable: true),
-                    Time = table.Column<string>(nullable: true),
-                    Theme = table.Column<string>(nullable: true),
-                    Homework = table.Column<string>(nullable: true),
-                    SubjectId = table.Column<string>(nullable: true),
-                    ScheduleId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lessons", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Lessons_Schedules_ScheduleId",
-                        column: x => x.ScheduleId,
-                        principalTable: "Schedules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Lessons_Subjects_SubjectId",
-                        column: x => x.SubjectId,
-                        principalTable: "Subjects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StudentSubject",
                 columns: table => new
                 {
@@ -477,36 +503,6 @@ namespace WebDiary.Migrations
                         name: "FK_StudentSubject_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Marks",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    Value = table.Column<double>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    TimeSet = table.Column<DateTime>(nullable: false),
-                    StudentId = table.Column<string>(nullable: true),
-                    MarkType = table.Column<int>(nullable: false),
-                    JournalId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Marks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Marks_Journals_JournalId",
-                        column: x => x.JournalId,
-                        principalTable: "Journals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Marks_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -556,6 +552,11 @@ namespace WebDiary.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LessonInfos_JournalId",
+                table: "LessonInfos",
+                column: "JournalId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Lessons_ScheduleId",
                 table: "Lessons",
                 column: "ScheduleId");
@@ -579,6 +580,11 @@ namespace WebDiary.Migrations
                 name: "IX_Schedules_SchoolClassId",
                 table: "Schedules",
                 column: "SchoolClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SchoolClasses_ScheduleId",
+                table: "SchoolClasses",
+                column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolClasses_SchoolId",
@@ -631,10 +637,58 @@ namespace WebDiary.Migrations
                 name: "IX_Subjects_TeacherId",
                 table: "Subjects",
                 column: "TeacherId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_LessonInfos_Journals_JournalId",
+                table: "LessonInfos",
+                column: "JournalId",
+                principalTable: "Journals",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Marks_Journals_JournalId",
+                table: "Marks",
+                column: "JournalId",
+                principalTable: "Journals",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Lessons_Subjects_SubjectId",
+                table: "Lessons",
+                column: "SubjectId",
+                principalTable: "Subjects",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Lessons_Schedules_ScheduleId",
+                table: "Lessons",
+                column: "ScheduleId",
+                principalTable: "Schedules",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_SchoolClasses_Schedules_ScheduleId",
+                table: "SchoolClasses",
+                column: "ScheduleId",
+                principalTable: "Schedules",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_UserProfiles_AspNetUsers_Id",
+                table: "UserProfiles");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_SchoolClasses_Schedules_ScheduleId",
+                table: "SchoolClasses");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -649,6 +703,9 @@ namespace WebDiary.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "LessonInfos");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
@@ -669,9 +726,6 @@ namespace WebDiary.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Schedules");
-
-            migrationBuilder.DropTable(
                 name: "Journals");
 
             migrationBuilder.DropTable(
@@ -682,6 +736,12 @@ namespace WebDiary.Migrations
 
             migrationBuilder.DropTable(
                 name: "Parents");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Schedules");
 
             migrationBuilder.DropTable(
                 name: "SchoolClasses");
@@ -697,9 +757,6 @@ namespace WebDiary.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

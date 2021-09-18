@@ -42,34 +42,14 @@
             <div id="navbarMain" class="navbar-menu">
                 <div class="navbar-start">
                     <a class="navbar-item">
-                        Home
+                        About
                     </a>
-
                     <a class="navbar-item">
-                        Documentation
+                        Contact
                     </a>
 
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            More
-                        </a>
 
-                        <div class="navbar-dropdown">
-                            <a class="navbar-item">
-                                About
-                            </a>
-                            <a class="navbar-item">
-                                Jobs
-                            </a>
-                            <a class="navbar-item">
-                                Contact
-                            </a>
-                            <hr class="navbar-divider">
-                            <a class="navbar-item">
-                                Report an issue
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="navbar-end">
@@ -223,10 +203,10 @@
                                 School
                             </p>
                             <ul class="menu-list">
-                                <li><a asp-area="" asp-controller="School" asp-action="GetSchoolsStudent">School</a></li>
-                                <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListStudent">Class</a></li>
-                                <li><a>Schedule</a></li>
-                                <li><a>Journal</a></li>
+                                <li><a asp-area="" asp-controller="School" asp-action="GetSchoolsStudent">Schools</a></li>
+                                <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListStudent">Classes</a></li>
+                                <li><a asp-area="" asp-controller="Schedule" asp-action="RedirectStudentSchedule">Schedule</a></li>
+                                <li><a asp-area="" asp-controller="Journal" asp-action="RedirectStudentJournal">Journal</a></li>
                             </ul>
                             <p class="menu-label">
                                 Account
@@ -269,8 +249,8 @@
                                 <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
                                 <li><a asp-area="" asp-controller="Student" asp-action="GetStudentsSchoolWorker">Students</a></li>
                                 <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListSchoolWorker">Classes</a></li>
-                                <li><a>Workers</a></li>
-                                <li><a>Schedule</a></li>
+                                <li><a asp-area="" asp-controller="SchoolWorker" asp-action="GetSchoolWorkersSchoolWorker" >Workers</a></li>
+                                <li><a asp-area="" asp-controller="Schedule" asp-action="RedirectSchoolWorkerSchedule">Teacher Schedule</a></li>
                                 <li><a>Journal</a></li>
                             </ul>
                             <p class="menu-label">
@@ -290,10 +270,10 @@
                             </p>
                             <ul class="menu-list">
                                 <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
-                                <li><a>Class</a></li>
+                                <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassTeacherSchoolWorker">Class</a></li>
                                 <li><a>Subjects</a></li>
-                                <li><a>Teachers</a></li>
-                                <li><a>Teacher Schedule</a></li>
+                                <li><a asp-area="" asp-controller="SchoolWorker" asp-action="GetSchoolWorkersSchoolWorker">Teachers</a></li>
+                                <li><a asp-area="" asp-controller="Schedule" asp-action="RedirectSchoolWorkerSchedule">Teacher Schedule</a></li>
                                 <li><a>Journal</a></li>
                             </ul>
                             <p class="menu-label">
@@ -323,7 +303,7 @@
 
         <hr />
         <footer>
-            <p>&copy; WebDiary</p>
+            <p>&copy; WebDiary | 2021</p>
         </footer>
     </div>
     <script src="https://cdn.rawgit.com/PascaleBeier/bootstrap-validate/v2.2.0/dist/bootstrap-validate.js"></script>

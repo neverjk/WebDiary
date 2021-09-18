@@ -10,8 +10,8 @@ using WebDiary.Data.EFContext;
 namespace WebDiary.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    [Migration("20210912140540_fixduplicate")]
-    partial class fixduplicate
+    [Migration("20210917201011_fixsc")]
+    partial class fixsc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -207,15 +207,11 @@ namespace WebDiary.Migrations
 
                     b.Property<string>("Cabinet");
 
-                    b.Property<string>("Homework");
-
                     b.Property<string>("ScheduleId");
 
                     b.Property<string>("SubjectId");
 
-                    b.Property<string>("Theme");
-
-                    b.Property<string>("Time");
+                    b.Property<DateTime>("Time");
 
                     b.Property<int>("WeekDay");
 
@@ -226,6 +222,26 @@ namespace WebDiary.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("Lessons");
+                });
+
+            modelBuilder.Entity("WebDiary.Data.Models.LessonInfo", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Homework");
+
+                    b.Property<string>("JournalId");
+
+                    b.Property<string>("Theme");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JournalId");
+
+                    b.ToTable("LessonInfos");
                 });
 
             modelBuilder.Entity("WebDiary.Data.Models.Mark", b =>
@@ -325,11 +341,15 @@ namespace WebDiary.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("ScheduleId");
+
                     b.Property<string>("SchoolId");
 
                     b.Property<string>("TeacherId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("SchoolId");
 
@@ -524,7 +544,7 @@ namespace WebDiary.Migrations
 
             modelBuilder.Entity("WebDiary.Data.Models.Lesson", b =>
                 {
-                    b.HasOne("WebDiary.Data.Models.Schedule")
+                    b.HasOne("WebDiary.Data.Models.Schedule", "Schedule")
                         .WithMany("Lessons")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -532,6 +552,14 @@ namespace WebDiary.Migrations
                     b.HasOne("WebDiary.Data.Models.Subject", "Subject")
                         .WithMany("Lessons")
                         .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("WebDiary.Data.Models.LessonInfo", b =>
+                {
+                    b.HasOne("WebDiary.Data.Models.Journal", "Journal")
+                        .WithMany("LessonInfos")
+                        .HasForeignKey("JournalId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -567,13 +595,18 @@ namespace WebDiary.Migrations
             modelBuilder.Entity("WebDiary.Data.Models.Schedule", b =>
                 {
                     b.HasOne("WebDiary.Data.Models.SchoolClass", "SchoolClass")
-                        .WithMany("Schedules")
+                        .WithMany()
                         .HasForeignKey("SchoolClassId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("WebDiary.Data.Models.SchoolClass", b =>
                 {
+                    b.HasOne("WebDiary.Data.Models.Schedule", "Schedule")
+                        .WithMany()
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("WebDiary.Data.Models.School", "School")
                         .WithMany("Classes")
                         .HasForeignKey("SchoolId")

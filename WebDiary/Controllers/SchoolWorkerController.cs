@@ -45,10 +45,50 @@ namespace WebDiary.Controllers
         }
 
         [Authorize]
+        [Route("SchoolWorker/SchoolWorkersList")]
+        public ActionResult SchoolWorkersList(string schoolId, string searchString)
+        {
+            List<SchoolWorker> allSchoolWorkers = _schoolWorkers.GetSchoolWorkers.ToList();
+            var schoolWorkers = new List<SchoolWorker>();
+            School school = null;
+            var schoolWorkerObj = new ListSchoolWorkerViewModel();
+            if (!string.IsNullOrEmpty(schoolId))
+            {
+                schoolWorkers = allSchoolWorkers.Where(x => x.School.Id.ToLower() == schoolId.ToLower()).ToList();
+                school = schoolWorkers.FirstOrDefault().School;
+            }
+            else
+            {
+                if (!User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                schoolWorkers = allSchoolWorkers;
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var _schoolWorkers = new List<SchoolWorker>();
+                foreach (var s in schoolWorkers)
+                {
+                    string fullName = s.Person.UserProfile.FirstName + s.Person.UserProfile.LastName + s.Person.UserProfile.MiddleName;
+                    if (fullName.ToLower().Contains(searchString.ToLower()))
+                    {
+                        _schoolWorkers.Add(s);
+                    }
+                }
+                schoolWorkers = _schoolWorkers;
+            }
+            schoolWorkerObj = new ListSchoolWorkerViewModel { GetSchoolWorkers = schoolWorkers, School = school };
+            return View(schoolWorkerObj);
+        }
+
+        [Authorize]
         [Route("SchoolWorker/SchoolWorkerPublicAccount")]
         public ActionResult SchoolWorkerPublicAccount(string schoolWorkerId)
         {
             SchoolWorker schoolWorker = null;
+            SchoolWorkerViewModel schoolWorkerObj = new SchoolWorkerViewModel();
             if (string.IsNullOrEmpty(schoolWorkerId))
             {
 
@@ -61,74 +101,55 @@ namespace WebDiary.Controllers
                 {
                     var result = JsonConvert.DeserializeObject<UserInfo>(info);
                     var id = result.UserId;
-                    if (schoolWorker.Id==id)
+                    if (schoolWorker.Id == id)
                     {
                         return RedirectToAction("SchoolWorkerPersonalAccount", "Account");
                     }
                 }
-            }
-            var schoolWorkerObj = new SchoolWorkerViewModel { GetSchoolWorker = schoolWorker, Class = schoolWorker.Class, Subjects = schoolWorker.Subjects };
-            return View(schoolWorkerObj);
-        }
-
-        [Authorize]
-        [Route("SchoolWorker/GetSchoolWorkersSchool")]
-        public ViewResult GetSchoolWorkersSchool(School schoolId)
-        {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
-
-            List<SchoolWorker> schoolWorkers = null;
-            if (string.IsNullOrEmpty(schoolId.Id))
-            {
-
-            }
-            else
-            {
-                foreach (SchoolWorker s in _schoolWorkers.GetSchoolWorkers)
+                else
                 {
-                    foreach (Subject s1 in s.Subjects)
-                    {
-                        if (s1.SchoolClass.School.Id.ToLower() == schoolId.Id.ToLower())
-                        {
-                            schoolWorkers.Add(s);
-                        }
-                    }
+                    return RedirectToAction("Logout", "Account");
                 }
 
+
+                if (schoolWorker.IsClassTeacher)
+                {
+                    schoolWorkerObj = new SchoolWorkerViewModel { GetSchoolWorker = schoolWorker, Class = schoolWorker.Class, Subjects = schoolWorker.Subjects };
+                }
+                else
+                {
+                    schoolWorkerObj = new SchoolWorkerViewModel { GetSchoolWorker = schoolWorker, Class = null, Subjects = schoolWorker.Subjects };
+                }
             }
-            var schoolWorkerObj = new ListSchoolWorkerViewModel { GetSchoolWorkers = schoolWorkers, School = schoolId };
             return View(schoolWorkerObj);
         }
 
-        [Route("SchoolWorker/GetSchoolWorkersClass")]
-        public ViewResult GetSchoolWorkersClass(SchoolClass schoolClassId)
+        public ActionResult GetSchoolWorkersSchoolWorker()
         {
-            //var info = HttpContext.Session.GetString("UserInfo");
-            //if (info != null)
-            //{
-            //    var result = JsonConvert.DeserializeObject<UserInfo>(info);
-            //    var id = result.UserId;
-            //}
-
-            IEnumerable<SchoolWorker> schoolWorkers = null;
-            School _school = null;
-            if (string.IsNullOrEmpty(schoolClassId.Id))
+            var info = HttpContext.Session.GetString("UserInfo");
+            string _schoolId = null;
+            if (info != null)
             {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                foreach (var s in _schoolWorkers.GetSchoolWorkers.ToList())
+                {
+                    foreach (var scw in s.School.SchoolWorkers)
+                    {
+                        if (scw.Person.UserProfile.User.Id.ToLower() == id.ToLower())
+                        {
+                            _schoolId = s.School.Id;
+                            break;
+                        }
+                    }
 
+                }
             }
             else
             {
-                schoolWorkers = _schoolWorkers.GetSchoolWorkers.Where(x => x.Class == schoolClassId);
-                _school = schoolClassId.School;
-
+                return RedirectToAction("Logout", "Account");
             }
-            var schoolWorkerObj = new ListSchoolWorkerViewModel { GetSchoolWorkers = schoolWorkers, School = _school };
-            return View(schoolWorkerObj);
+            return RedirectToAction("SchoolWorkersList", new { schoolId = _schoolId });
         }
     }
 }

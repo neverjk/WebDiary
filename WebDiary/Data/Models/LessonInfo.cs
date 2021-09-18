@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace WebDiary.Data.Models
 {
-    public class Journal
+    public class LessonInfo
     {
         [Key]
         [ScaffoldColumn(false)]
         public string Id { get; set; }
 
-        [ForeignKey("Subject")]
-        public string SubjectId { get; set; }
-        public virtual Subject Subject { get; set; }
+        public string Theme { get; set; }
+        public string Homework { get; set; }
+        public DateTime Date { get; set; }
 
-        public virtual ICollection<LessonInfo> LessonInfos { get; set; }
-        public virtual ICollection<Mark> Marks { get; set; }
-
+        [ForeignKey("Journal")]
+        public string JournalId { get; set; }
+        public Journal Journal { get; set; }
     }
 }

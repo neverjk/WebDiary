@@ -77,7 +77,7 @@ namespace WebDiary.Controllers
 
         [Authorize(Roles = "Student")]
         [Route("Account/StudentPersonalAccount")]
-        public ViewResult StudentPersonalAccount()
+        public ActionResult StudentPersonalAccount()
         {
             var info = HttpContext.Session.GetString("UserInfo");
             if (info != null)
@@ -111,14 +111,14 @@ namespace WebDiary.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Logout", "Account");
             }
 
         }
 
         [Authorize(Roles = "SchoolWorker")]
         [Route("Account/SchoolWorkerPersonalAccount")]
-        public ViewResult SchoolWorkerPersonalAccount()
+        public ActionResult SchoolWorkerPersonalAccount()
         {
             var info = HttpContext.Session.GetString("UserInfo");
             if (info != null)
@@ -155,14 +155,14 @@ namespace WebDiary.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Logout", "Account");
             }
 
         }
 
         [Authorize(Roles = "Parent")]
         [Route("Account/ParentPersonalAccount")]
-        public ViewResult ParentPersonalAccount()
+        public ActionResult ParentPersonalAccount()
         {
             var info = HttpContext.Session.GetString("UserInfo");
             if (info != null)
@@ -184,7 +184,7 @@ namespace WebDiary.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Logout", "Account");
             }
 
         }
@@ -316,16 +316,17 @@ namespace WebDiary.Controllers
         }
 
 
-        [HttpPost]
+        
+        [HttpPost, HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Account", new { reason="Your session has expired. Please log in." });
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string reason)
         {
             return View();
         }
@@ -333,6 +334,7 @@ namespace WebDiary.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            
             if (!ModelState.IsValid)
             {
                 return View();

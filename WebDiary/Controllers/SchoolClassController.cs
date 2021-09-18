@@ -24,7 +24,7 @@ namespace WebDiary.Controllers
 
         [Authorize]
         [Route("SchoolClass/SchoolClassesList")]
-        public ActionResult SchoolClassesList(string schoolId,  string studentId, string searchString)
+        public ActionResult SchoolClassesList(string schoolId, string studentId, string searchString)
         {
             var schoolClasses = new List<SchoolClass>();
             School school = null;
@@ -32,7 +32,7 @@ namespace WebDiary.Controllers
 
             if (!string.IsNullOrEmpty(schoolId))
             {
-                foreach(var scs in _schoolClasses.GetSchoolClasses.ToList())
+                foreach (var scs in _schoolClasses.GetSchoolClasses.ToList())
                 {
                     if (scs.School.Id.ToLower() == schoolId.ToLower())
                     {
@@ -49,7 +49,7 @@ namespace WebDiary.Controllers
                 }
                 foreach (var scs in _schoolClasses.GetSchoolClasses.ToList())
                 {
-                    foreach(var st in scs.SchoolClassStudents)
+                    foreach (var st in scs.SchoolClassStudents)
                     {
                         if (st.Student.Id.ToLower() == studentId.ToLower())
                         {
@@ -74,7 +74,7 @@ namespace WebDiary.Controllers
                 schoolClasses = schoolClasses.Where(x => x.Name.ToLower().Contains(searchString.ToLower())).ToList();
             }
 
-            var schoolClassObj = new ListSchoolClassViewModel { SchoolClasses = schoolClasses.OrderBy(x=>x.Name), Student = student, School = school};
+            var schoolClassObj = new ListSchoolClassViewModel { SchoolClasses = schoolClasses.OrderBy(x => x.Name), Student = student, School = school };
             return View(schoolClassObj);
         }
 
@@ -88,6 +88,8 @@ namespace WebDiary.Controllers
 
         }
 
+
+
         public ActionResult SchoolClassesListSchoolWorker()
         {
             var info = HttpContext.Session.GetString("UserInfo");
@@ -99,17 +101,47 @@ namespace WebDiary.Controllers
                 foreach (var s in _schoolClasses.GetSchoolClasses.ToList())
                 {
                     foreach (var scw in s.School.SchoolWorkers)
+                    {
+                        if (scw.Person.UserProfile.User.Id.ToLower() == id.ToLower())
                         {
-                            if (scw.Person.UserProfile.User.Id.ToLower() == id.ToLower())
-                            {
-                                _schoolId = s.School.Id;
-                                break;
-                            }
+                            _schoolId = s.School.Id;
+                            break;
                         }
-                    
+                    }
+
                 }
             }
-            return RedirectToAction("SchoolClassesList",  new { schoolId = _schoolId });
+            else
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+            return RedirectToAction("SchoolClassesList", new { schoolId = _schoolId });
+        }
+
+        public ActionResult SchoolClassTeacherSchoolWorker()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            string _schoolClassId = null;
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                foreach (var s in _schoolClasses.GetSchoolClasses.ToList())
+                {
+                    if (s.Teacher.Id.ToLower() == id.ToLower())
+                    {
+                        _schoolClassId = s.Id;
+                        break;
+                    }
+
+
+                }
+            }
+            else
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+            return RedirectToAction("SchoolClass", new { id = _schoolClassId });
         }
 
         public ActionResult SchoolClassesListStudent()
@@ -123,6 +155,10 @@ namespace WebDiary.Controllers
                 _studentId = id;
 
 
+            }
+            else
+            {
+                return RedirectToAction("Logout", "Account");
             }
             return RedirectToAction("SchoolClassesList", new { studentId = _studentId });
         }

@@ -6,9 +6,9 @@ using WebDiary.Data.Models;
 
 namespace WebDiary.Data.ViewModels
 {
-    public class ScheduleViewModel
+    public class ListJournalViewModel
     {
-        public Schedule GetSchedule { get; set; }
+        public List<JournalViewModel> JournalViewModels { get; set; }
         public SchoolClass SchoolClass { get; set; }
     }
 }

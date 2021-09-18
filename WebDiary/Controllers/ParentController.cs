@@ -38,10 +38,14 @@ namespace WebDiary.Controllers
                 {
                     var result = JsonConvert.DeserializeObject<UserInfo>(info);
                     var id = result.UserId;
-                    if (id.ToLower() == parentId)
+                    if (id.ToLower() == parentId.ToLower())
                     {
                         return RedirectToAction("ParentPersonalAccount", "Account");
                     }
+                }
+                else
+                {
+                    return RedirectToAction("Logout", "Account");
                 }
                 parent = _parents.GetParents.FirstOrDefault(x => x.Id.ToLower() == parentId.ToLower());
                 

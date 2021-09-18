@@ -24,6 +24,12 @@
     <Compile Remove="Migrations\20210908121735_createdb5.Designer.cs" />
     <Compile Remove="Migrations\20210912135355_fixduplicate.cs" />
     <Compile Remove="Migrations\20210912135355_fixduplicate.Designer.cs" />
+    <Compile Remove="Migrations\20210912140540_fixduplicate.cs" />
+    <Compile Remove="Migrations\20210912140540_fixduplicate.Designer.cs" />
+    <Compile Remove="Migrations\20210914141601_bruh.cs" />
+    <Compile Remove="Migrations\20210914141601_bruh.Designer.cs" />
+    <Compile Remove="Migrations\20210916160735_fixschedule.cs" />
+    <Compile Remove="Migrations\20210916160735_fixschedule.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,12 +15,15 @@ namespace WebDiary.Data.Models
         public string Id { get; set; }
         public int WeekDay { get; set; }
         public string Cabinet { get; set; }
-        public string Time { get; set; }
-        public string Theme { get; set; }
-        public string Homework { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime Time { get; set; }
 
         [ForeignKey("Subject")]
         public string SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
+
+        [ForeignKey("Schedule")]
+        public string ScheduleId { get; set; }
+        public virtual Schedule Schedule { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace WebDiary.Data.Repository
             _context = dbContext;
         }
         public IEnumerable<Parent> GetParents => _context.Parents
-            .Include(x => x.Kids);
+            .Include(x => x.UserProfile).ThenInclude(x => x.User)
+            .Include(x => x.Kids).ThenInclude(x => x.Person).ThenInclude(x => x.UserProfile).ThenInclude(x => x.User);
     }
 }

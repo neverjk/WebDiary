@@ -61,7 +61,7 @@
                             <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1 ">Subjects</a>
                         </div>
                         <div class="column has-text-centered">
-                            <a class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1">Schedule</a>
+                            <a asp-area="" asp-controller="Schedule" asp-action="GetScheduleSchoolClass" asp-route-schoolClassId="@Model.SchoolClass.Id" class="subtitle is-5 is-family-code has-text-link m-0 has-text-weight-bold pb-1">Schedule</a>
                         </div>
                     </div><footer class="card-footer mb-0 pb-0">
                         @if (User.IsInRole("Director") || User.IsInRole("Manager") || User.IsInRole("Teacher"))

@@ -13,7 +13,7 @@ namespace WebDiary.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("PersonalAccount", "Account");
         }
 
         public IActionResult About()

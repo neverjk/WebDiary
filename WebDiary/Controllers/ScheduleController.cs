@@ -177,18 +177,7 @@ namespace WebDiary.Controllers
             {
                 var result = JsonConvert.DeserializeObject<UserInfo>(info);
                 var id = result.UserId;
-                foreach (var s in _schedules.GetSchedules)
-                {
-                    foreach (var scw in s.SchoolClass.School.SchoolWorkers)
-                    {
-                        if (scw.Id.ToLower() == id.ToLower())
-                        {
-                            _schoolworkerid = scw.Id;
-                            break;
-                        }
-                    }
-
-                }
+                _schoolworkerid = id;
             }
             else
             {

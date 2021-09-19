@@ -19,6 +19,6 @@ namespace WebDiary.Data.Repository
         }
         public IEnumerable<Subject> GetSubjects => _context.Subjects
             .Include(x => x.SchoolClass)
-            .Include(x => x.Teacher);
+            .Include(x => x.Teacher).ThenInclude(x=>x.Person).ThenInclude(x=>x.UserProfile);
     }
 }

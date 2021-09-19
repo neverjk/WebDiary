@@ -39,7 +39,6 @@ namespace WebDiary.Controllers
             //_myEmailSender = myEmailSender;
         }
 
-        [Authorize]
         [Route("Account/PersonalAccount")]
         public ActionResult PersonalAccount()
         {
@@ -70,7 +69,7 @@ namespace WebDiary.Controllers
             {
                 return RedirectToAction("ParentPersonalAccount");
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Logout", "Account");
             
 
         }
@@ -363,7 +362,8 @@ namespace WebDiary.Controllers
             };
             HttpContext.Session.SetString("UserInfo", JsonConvert.SerializeObject(userInfo));
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("PersonalAccount", "Account");
+
         }
 
 

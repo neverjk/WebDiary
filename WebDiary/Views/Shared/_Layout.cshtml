@@ -41,12 +41,12 @@
 
             <div id="navbarMain" class="navbar-menu">
                 <div class="navbar-start">
-                    <a class="navbar-item">
+                    @*<a class="navbar-item">
                         About
                     </a>
                     <a class="navbar-item">
                         Contact
-                    </a>
+                    </a>*@
 
 
 
@@ -251,7 +251,7 @@
                                 <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassesListSchoolWorker">Classes</a></li>
                                 <li><a asp-area="" asp-controller="SchoolWorker" asp-action="GetSchoolWorkersSchoolWorker" >Workers</a></li>
                                 <li><a asp-area="" asp-controller="Schedule" asp-action="RedirectSchoolWorkerSchedule">Teacher Schedule</a></li>
-                                <li><a>Journal</a></li>
+                                <li><a asp-area="" asp-controller="Journal" asp-action="RedirectTeacherJournal">Journal</a></li>
                             </ul>
                             <p class="menu-label">
                                 Account
@@ -271,10 +271,10 @@
                             <ul class="menu-list">
                                 <li><a asp-area="" asp-controller="School" asp-action="GetSchoolSchoolWorker">School</a></li>
                                 <li><a asp-area="" asp-controller="SchoolClass" asp-action="SchoolClassTeacherSchoolWorker">Class</a></li>
-                                <li><a>Subjects</a></li>
+                                <li><a asp-area="" asp-controller="Subject" asp-action="RedirectSchoolWorkerSubjects">Subjects</a></li>
                                 <li><a asp-area="" asp-controller="SchoolWorker" asp-action="GetSchoolWorkersSchoolWorker">Teachers</a></li>
                                 <li><a asp-area="" asp-controller="Schedule" asp-action="RedirectSchoolWorkerSchedule">Teacher Schedule</a></li>
-                                <li><a>Journal</a></li>
+                                <li><a asp-area="" asp-controller="Journal" asp-action="RedirectTeacherJournal">Journal</a></li>
                             </ul>
                             <p class="menu-label">
                                 Account

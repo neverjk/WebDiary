@@ -23,14 +23,14 @@ namespace WebDiary.Controllers
 
         [Authorize]
         [Route("Journal/GetJournalsStudent")]
-        public ViewResult GetJournalsStudent (string studentId)
+        public ViewResult GetJournalsStudent(string studentId)
         {
             Student student = null;
             List<JournalViewModel> allJournalsFiltered = new List<JournalViewModel>();
             foreach (var j in _journals.GetJournals)
             {
                 JournalViewModel journalViewModel = null;
-                foreach(var st in j.Subject.StudentSubjects)
+                foreach (var st in j.Subject.StudentSubjects)
                 {
                     if (st.Student.Id == studentId)
                     {
@@ -50,12 +50,13 @@ namespace WebDiary.Controllers
                 }
                 if (journalViewModel != null)
                 {
+                    journalViewModel.MarksFilter = journalViewModel.MarksFilter.OrderBy(x => x.TimeSet).ToList();
                     allJournalsFiltered.Add(journalViewModel);
                 }
             }
 
             List<SchoolClass> schoolClasses = new List<SchoolClass>();
-            foreach(var j in allJournalsFiltered)
+            foreach (var j in allJournalsFiltered)
             {
                 if (!schoolClasses.Contains(j.GetJournal.Subject.SchoolClass))
                 {
@@ -63,12 +64,12 @@ namespace WebDiary.Controllers
                 }
             }
             List<ListJournalViewModel> filteredByClass = new List<ListJournalViewModel>();
-            foreach(var s in schoolClasses)
+            foreach (var s in schoolClasses)
             {
                 ListJournalViewModel listJournalViewModel = new ListJournalViewModel();
                 listJournalViewModel.SchoolClass = s;
                 listJournalViewModel.JournalViewModels = new List<JournalViewModel>();
-                foreach(var j in allJournalsFiltered)
+                foreach (var j in allJournalsFiltered)
                 {
                     if (j.GetJournal.Subject.SchoolClass.Id == s.Id)
                     {
@@ -79,6 +80,32 @@ namespace WebDiary.Controllers
             }
 
             var journalObj = new ListJournalsStudentViewModel { ListJournalsViewModels = filteredByClass, Student = student };
+            return View(journalObj);
+        }
+
+        [Authorize]
+        [Route("Journal/GetJournalTeacher")]
+        public ViewResult GetJournalTeacher(string teacherId)
+        {
+            SchoolWorker teacher = null;
+            List<JournalViewModel> allJournalsFiltered = new List<JournalViewModel>();
+            foreach (var j in _journals.GetJournals)
+            {
+                JournalViewModel journalViewModel = null;
+                if (j.Subject.Teacher.Id == teacherId)
+                {
+                    teacher = j.Subject.Teacher;
+                    journalViewModel = new JournalViewModel();
+                    journalViewModel.GetJournal = j;
+                    journalViewModel.MarksFilter = j.Marks.OrderBy(x => x.TimeSet).ToList();
+                }
+
+                if (journalViewModel != null)
+                {
+                    allJournalsFiltered.Add(journalViewModel);
+                }
+            }
+            var journalObj = new ListJournalViewModel { JournalViewModels = allJournalsFiltered, SchoolWorker = teacher };
             return View(journalObj);
         }
 
@@ -99,6 +126,25 @@ namespace WebDiary.Controllers
                 return RedirectToAction("Logout", "Account");
             }
             return RedirectToAction("GetJournalsStudent", new { studentId = _studentid });
+        }
+
+        [Authorize]
+        [Route("Journal/RedirectTeacherJournal")]
+        public ActionResult RedirectTeacherJournal()
+        {
+            var info = HttpContext.Session.GetString("UserInfo");
+            string _teacherId = null;
+            if (info != null)
+            {
+                var result = JsonConvert.DeserializeObject<UserInfo>(info);
+                var id = result.UserId;
+                _teacherId = id;
+            }
+            else
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+            return RedirectToAction("GetJournalTeacher", new { teacherId = _teacherId });
         }
 
         //[Route("Journal/GetJournalsTeacher")]

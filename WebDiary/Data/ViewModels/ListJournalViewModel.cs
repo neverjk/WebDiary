@@ -10,5 +10,6 @@ namespace WebDiary.Data.ViewModels
     {
         public List<JournalViewModel> JournalViewModels { get; set; }
         public SchoolClass SchoolClass { get; set; }
+        public SchoolWorker SchoolWorker { get; set; }
     }
 }
